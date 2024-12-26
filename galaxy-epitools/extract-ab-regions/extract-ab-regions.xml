@@ -1,0 +1,131 @@
+<tool id="extract-ab-regions" name="Extract Ab regions" version="1.0">
+
+    <description> by positional numbering</description>
+
+    <requirements>
+        <requirement type="package" version="2021.02.04">bioconda::anarci</requirement>
+        <requirement type="package" version="2.0.1">csvkit</requirement>
+        <requirement type="package" version="2.2.3">pandas</requirement>
+    </requirements>
+
+    <command><![CDATA[
+        ANARCI --sequence '$input_fasta' --scheme '$anarci_scheme' --csv --outfile 'numbering';
+        mkdir -p regions;
+        #for $region in $regions:
+            python $__tool_directory__/extract-ab-region.py
+                --numbering-file 'numbering_${region.chain}.csv'
+                --name '${region.name}'
+                --start '${region.start}'
+                --end '${region.end}'
+                --output-file 'regions/${region.__index__}_${region.name}.tsv';
+        #end for
+        csvjoin -t -c 1 regions/*.tsv | csvformat -T  > '$output_file'
+    ]]></command>
+
+    <inputs>
+        <param argument="--input-fasta" type="data" format="fasta" label="Input FASTA" help="The FASTA file with Ab sequences to extract regions from." />
+        <param argument="--anarci-scheme" type="select" multiple="false" label="Numbering scheme" help="Ab numbering scheme to pass to ANARCI">
+            <option value="imgt" selected="true">IMGT</option>
+            <option value="kabat">Kabat</option>
+            <option value="chothia">Chothia</option>
+            <option value="martin">Extended Chothia (Martin)</option>
+            <option value="wolfguy">Wolfguy</option>
+            <option value="Aho">Aho</option>
+        </param>
+        <repeat name="regions" title="Region">
+            <param name="name" type="text" label="Region name" help="The name that will be used for the region."/>
+            <param name="chain" type="select" multiple="false" label="Chain" help="Which chain the region is located on.">
+                <option value="KL">Light chain</option>
+                <option value="H">Heavy chain</option>
+            </param>
+            <param name="start" type="integer" label="Start position" help="The numbered position where the region starts (inclusive)."/>
+            <param name="end" type="integer" label="End position" help="The numbered position where the region ends (inclusive)."/>
+        </repeat>
+    </inputs>
+
+    <outputs>
+        <data name="output_file" format="tabular" label="${tool.name}: Regions"/>
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="input_fasta" value="single-cdr/SQK-NBD114-24_barcode01.fasta"/>
+            <param name="anarci_scheme" value="imgt"/>
+            <repeat name="regions">
+                <param name="name" value="CDRL1"/>
+                <param name="chain" value="KL"/>
+                <param name="start" value="27"/>
+                <param name="end" value="38"/>
+            </repeat>
+            <output name="output_file" file="single-cdr/0_CDRL1.tsv"/>
+        </test>
+        <test>
+            <param name="input_fasta" value="multiple-cdrs/SQK-NBD114-24_barcode01.fasta"/>
+            <param name="anarci_scheme" value="imgt"/>
+            <repeat name="regions">
+                <param name="name" value="CDRL1"/>
+                <param name="chain" value="KL"/>
+                <param name="start" value="27"/>
+                <param name="end" value="38"/>
+            </repeat>
+            <repeat name="regions">
+                <param name="name" value="CDRL2"/>
+                <param name="chain" value="KL"/>
+                <param name="start" value="56"/>
+                <param name="end" value="69"/>
+            </repeat>
+            <repeat name="regions">
+                <param name="name" value="CDRL3"/>
+                <param name="chain" value="KL"/>
+                <param name="start" value="105"/>
+                <param name="end" value="117"/>
+            </repeat>
+            <repeat name="regions">
+                <param name="name" value="CDRH1"/>
+                <param name="chain" value="H"/>
+                <param name="start" value="27"/>
+                <param name="end" value="38"/>
+            </repeat>
+            <repeat name="regions">
+                <param name="name" value="CDRH2"/>
+                <param name="chain" value="H"/>
+                <param name="start" value="56"/>
+                <param name="end" value="65"/>
+            </repeat>
+            <repeat name="regions">
+                <param name="name" value="CDRH3"/>
+                <param name="chain" value="H"/>
+                <param name="start" value="105"/>
+                <param name="end" value="117"/>
+            </repeat>
+            <output name="output_file" file="multiple-cdrs/CDRs.tsv"/>
+        </test>
+    </tests>
+
+    <help><![CDATA[
+    
+. class:: infomark.
+
+**What it does**
+
+This tool takes a FASTA file of Ab sequences, numbers it with ANARCI, and extract specified sequence regions.
+
+It outputs a tabular file where the first column is the IDs found in the FASTA and each column is a sequence region.
+
+    ]]></help>
+
+    <citations>
+        <citation type="doi">https://doi.org/10.1093/bioinformatics/btv552</citation>
+        <citation type="doi">https://doi.org/10.5281/zenodo.3509134</citation>
+        <citation type="bibtex">@misc{csvkit,
+          author       = {The csvkit Contributors},
+          title        = {csvkit: A suite of utilities for converting to and working with CSV, the king of tabular file formats},
+          year         = {2024},
+          url          = {https://github.com/wireservice/csvkit},
+          note         = {GitHub repository},
+          howpublished = {\url{https://github.com/wireservice/csvkit}}
+        }</citation>
+    </citations>
+
+</tool>
+

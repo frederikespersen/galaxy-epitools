@@ -1,0 +1,115 @@
+<tool id="lima" name="Lima" version="1.0">
+
+    <description> Demultiplexing PacBio data</description>
+
+    <requirements>
+        <requirement type="package" version="2.12.0">lima</requirement>
+    </requirements>
+
+    <command><![CDATA[
+        #if $barcode_input_format == 'fasta':
+            cat $barcodes > barcodes.fasta;
+        #end if
+        #if $barcode_input_format == 'manual':
+            #for $barcode in $barcodes:
+                echo -e '>${barcode.name}\n${barcode.sequence}' >> barcodes.fasta;
+            #end for
+        #end if
+        cat $input_fastq > reads.fastq;
+        mkdir lima demultiplexed;
+        lima reads.fastq barcodes.fasta lima/demux.fastq
+            --ccs
+            --min-score 70
+            --min-ref-span 0.75
+            --split-named
+            --single-side
+            --dump-removed;
+        python $__tool_directory__/lima.py
+            --input-dir lima
+            --output-dir demultiplexed
+            --fastq-prefix demux;
+    ]]></command>
+
+    <inputs>
+        <param name="input_fastq" type="data" format="fastq,fastq.gz,fastqsanger" label="Input FASTQ" help="PacBio FASTQ-file to demultiplex."/>
+        <conditional name="input_format">
+            <param name="barcode_input_format" type="select" multiple="False" display="radio"c label="Barcodes input format" help="Choose how to specify the barcodes for demultiplexing.">
+                <option value="fasta">As FASTA file</option>
+                <option value="manual">Manually in Galaxy</option>
+            </param>
+            <when value="fasta">
+                <param name="barcodes" type="data" format="fasta" label="Input FASTA with Barcodes" help="Note that FASTA header names must be unique and not contain whitespace."/>
+            </when>
+            <when value="manual">
+                <repeat name="barcodes" title="Barcodes">
+                    <param name="name" type="text" label="Barcode name" help="Unique barcode name (I.e. sample name)"/>
+                    <param name="sequence" type="text" label="Barcode sequence" help="The barcode sequence to demultiplex by."/>
+                </repeat>
+            </when>
+        </conditional>
+    </inputs>
+
+    <outputs>
+        <collection name="output_demultiplexed" type="list" label="${tool.name}: Demultiplexed FASTQs">
+            <discover_datasets pattern="__name__" directory="demultiplexed" format="fastq"/>
+        </collection>
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="input_fastq" value="fasta-barcodes/PacBio.sample.fastq"/>
+            <param name="barcode_input_format" value="fasta"/>
+            <param name="barcodes" value="fasta-barcodes/barcodes.fasta"/>
+            <output_collection name="output_demultiplexed">
+                <element name="Sample_1A.fastq" file="fasta-barcodes/demultiplexed/Sample_1A.fastq" ftype="fastq" />
+                <element name="unbarcoded.fastq" file="fasta-barcodes/demultiplexed/unbarcoded.fastq" ftype="fastq" />
+            </output_collection>
+        </test>
+        <test>
+            <param name="input_fastq" value="manual-barcodes/PacBio.sample.fastq"/>
+            <param name="barcode_input_format" value="manual"/>
+            <repeat name="barcodes">
+                <param name="name" value="Sample-1A"/>
+                <param name="sequence" value="CTGGTACACG"/>
+            </repeat>
+            <repeat name="barcodes">
+                <param name="name" value="Sample-4A"/>
+                <param name="sequence" value="TCAACGTGTA"/>
+            </repeat>
+            <repeat name="barcodes">
+                <param name="name" value="Sample-6B"/>
+                <param name="sequence" value="ACTGTTGTGA"/>
+            </repeat>
+            <repeat name="barcodes">
+                <param name="name" value="Sample-8B"/>
+                <param name="sequence" value="GTGCGTCCTT"/>
+            </repeat>
+            <output_collection name="output_demultiplexed">
+                <element name="Sample_1A.fastq" file="manual-barcodes/demultiplexed/Sample_1A.fastq" ftype="fastq" />
+                <element name="unbarcoded.fastq" file="manual-barcodes/demultiplexed/unbarcoded.fastq" ftype="fastq" />
+            </output_collection>
+        </test>
+    </tests>
+
+    <help><![CDATA[
+    
+. class:: infomark.
+
+**What it does**
+
+
+    ]]></help>
+
+    <citations>
+        <citation type="bibtex">
+        @misc{lima_how,
+            author       = {Pacific Biosciences},
+            title        = {Lima: The PacBio Barcode Demultiplexer},
+            year         = {2024},
+            url          = {https://lima.how/},
+            note         = {Accessed: 2024-12-18}
+        }
+        </citation>
+    </citations>
+
+</tool>

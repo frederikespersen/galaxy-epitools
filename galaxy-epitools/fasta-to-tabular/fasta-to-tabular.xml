@@ -1,0 +1,59 @@
+<tool id="fasta-to-tabular" name="FASTA to Tabular" version="1.0">
+
+    <description> converter</description>
+
+    <requirements>
+        <requirement type="package" version="1.84">biopython</requirement>
+        <requirement type="package" version="2.2.3">pandas</requirement>
+    </requirements>
+
+    <command>
+        python $__tool_directory__/fasta-to-tabular.py
+            --input-fasta '$input_fasta'
+            --output-file '$output_file'
+            --file-delim 'tsv'
+            --field-delim '$field_delim'
+            --none-value $none_value
+    </command>
+
+    <inputs>
+        <param argument="--input-fasta" type="data" format="fasta" label="Input FASTA file" help="FASTA file with header fields."/>
+        <param argument="--field-delim" type="text" value="=" label="Field delimiter" help="Delimiter between name and value for FASTA header fields."/>
+        <param argument="--none-value" type="text" value="N/A" label="FASTA header 'None'-value" help="Value to consider 'None' in FASTA header fields."/>
+    </inputs>
+
+    <outputs>
+        <data name="output_file" format="tabular" label="${tool.name}: TSV"/>
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="input_fasta" value="tsv/SQK-NBD114-24_barcode01.fasta"/>
+            <param name="field_delim" value="="/>
+            <param name="none_value" value="N/A"/>
+            <output name="output_file" file="tsv/SQK-NBD114-24_barcode01.tsv"/>
+        </test>
+    </tests>
+
+    <help><![CDATA[
+    
+. class:: infomark.
+
+**What it does**
+This tool takes a FASTA file and parses it into a tab-separated format (.tsv).
+The FASTA file header fields will be made into columns and the header ID into row indices.
+
+**How should the FASTA look?**
+The FASTA header parsing enforces the following header format requirement for FASTA entries:
+``>[ID] [field1]=[value1] [field2]=[value2] [field3]=[value3]``
+While the '=' can be specified through the ``field_delim`` argument, all fields must be separated by a space.
+Non-compliant headers will throw an error to the tool.
+
+    ]]></help>
+
+    <citations>
+        <citation type="doi">https://doi.org/10.1093/bioinformatics/btp163</citation>
+        <citation type="doi">https://doi.org/10.5281/zenodo.3509134</citation>
+    </citations>
+
+</tool>

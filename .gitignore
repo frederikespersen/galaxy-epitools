@@ -1,0 +1,12 @@
+# Clone of Galaxy project
+galaxy/
+
+# Setup files and local logs
+setup-files/
+logs/
+
+# Test data
+**/test-data/
+
+# Test reports
+**/tool_test_output.*

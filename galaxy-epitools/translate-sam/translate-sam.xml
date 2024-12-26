@@ -1,0 +1,78 @@
+<tool id="translate-sam" name="Translate SAM reads" version="1.0">
+
+    <description> within aligned reading frame</description>
+
+    <requirements>
+        <requirement type="package" version="1.84">biopython</requirement>
+        <requirement type="package" version="0.22.1">pysam</requirement>
+        <requirement type="package" version="2024.11.6">regex</requirement>
+    </requirements>
+
+    <command>
+        python $__tool_directory__/translate-sam.py
+            --input-sam '$input_sam'
+            --output-fasta '$output_fasta'
+            --templates-fasta '$templates_fasta'
+            --fasta-type $fasta_type
+            --val-min-mapq $val_min_mapq
+            --val-n-last $val_n_last
+            --val-n-sub $val_n_sub
+    </command>
+
+    <inputs>
+        <param argument="--input-sam" type="data" format="sam" label="Input SAM file" help="SAM file aligned to template."/>
+        <param argument="--templates-fasta" type="data" format="fasta" label="Templates as FASTA" help="Templates used for alignment."/>
+        <param argument="--fasta-type" type="select" multiple="false" label="FASTA format" help="Format of template sequences">
+            <option value="dna" selected="true">Nucleotides</option>
+            <option value="aa">Amino acids</option>
+        </param>
+        <param argument="--val-min-mapq" type="integer" min="0" max="60" value="60" label="Minimum mapping quality" help="The minimum ``minimap2`` mapping quality to accept (Maximum 60 is recommended)."/>
+        <param argument="--val-n-last" type="integer" min="1" value="11" label="FRW4 length for validation" help="How many of the C-ter template residues to use for FRW4 validation (Do not surpass length of FRW4, as CDR3 then has to match library template) (FRW4 is 11 AA long in *Specifica* libraries)."/>
+        <param argument="--val-n-sub" type="integer" min="0" value="1" label="FRW4 validation tolerance" help="How many substitution errors to tolerate in the FRW4 validation (Should be much smaller than the FRW4 validation length)."/>
+    </inputs>
+
+    <outputs>
+        <data name="output_fasta" format="fasta" label="${tool.name}: Translated FASTA"/>
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="input_sam" value="single-file/SQK-NBD114-24_barcode01.sam"/>
+            <param name="templates_fasta" value="single-file/Specifica_scaffolds_dna.fasta"/>
+            <param name="fasta_type" value="dna"/>
+            <output name="output_fasta" file="single-file/SQK-NBD114-24_barcode01.fasta" />
+        </test>
+    </tests>
+
+    <help><![CDATA[
+    
+. class:: infomark.
+
+**What it does**
+
+This tool takes a SAM file of reads aligned to templates by ``minimap2``, and translates the reads into amino acid sequences, using the open reading frame starting at the beginning of the aligned template.
+
+The translations are validated based on: 1) Mapping quality, 2) Matching to template FRW4 (within a margin of error), and 3) In-alignment truncations.
+
+FASTA entries are returned with an ID corresponding to the original read ID.
+Additionally, the description includes three fields:
+
+* ``framework``: The framework assigned during alignment by ``minimap2`` (The name given in the template fasta file).
+* ``5-umi``: The 5'-UMI of the read, if found. Uses the pattern ``TTT VVVV TT VVVV TT VVVV TT VVVV TTT``, where V ∈ [A,C,G]
+* ``3-umi``: The 3'-UMI of the read, if found. Uses the pattern ``AAA BBBB AA BBBB AA BBBB AA BBBB AAA``, where B ∈ [T,C,G]
+    ]]></help>
+
+    <citations>
+        <citation type="doi">https://doi.org/10.1093/bioinformatics/btp163</citation>
+        <citation type="bibtex">
+            @misc{pysam,
+                author       = {Pysam Developers},
+                title        = {pysam: a Python library for reading, manipulating, and writing genomic data sets},
+                year         = {2024},
+                url          = {https://github.com/pysam-developers/pysam},
+                note         = {Accessed: 2024-11-21}}
+        </citation>
+        <citation type="doi">https://doi.org/10.1093/bioinformatics/bty191</citation>
+    </citations>
+
+</tool>
