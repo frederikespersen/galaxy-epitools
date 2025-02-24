@@ -1,0 +1,136 @@
+<tool id='ab-ngs-abundance' name="Calculate Ab abundance in NGS dataset" version="1.0">
+
+    <description> grouped on framework and variable regions</description>
+
+    <requirements>
+        <requirement type="package" version="2.2.3">pandas</requirement>
+    </requirements>
+
+    <command><![CDATA[
+        #if $umi_correction.enable:
+            python $__tool_directory__/ab-ngs-abundance.py
+                --input-tsv $input_tsv
+                --framework-col $framework_col
+                --cdr-cols
+                    #for $cdr_col in $cdr_cols
+                        $cdr_col.name
+                    #end for
+                --umi-cols 
+                    #for $umi_col in $umi_correction.umi_cols
+                        $umi_col.name
+                    #end for
+                --output-tsv $output_abundance;
+        #else:
+            python $__tool_directory__/ab-ngs-abundance.py
+                --input-tsv $input_tsv
+                --framework-col $framework_col
+                --cdr-cols
+                    #for $cdr_col in $cdr_cols
+                        $cdr_col.name
+                    #end for
+                --output-tsv $output_abundance;
+        #end if
+    ]]></command>
+
+    <inputs>
+        <param argument="--input-tsv" type="data" format="tabular,tsv" label="Input TSV" help="TSV file with preprocessed NGS reads"/>
+        <param argument="--framework-col" type="text" value="framework" label="Name of 'Framework' column" help="The name of the framework column in the input datasets (case-sensitive)"/>
+        <repeat name="cdr_cols" title="CDR Columns">
+            <param name="name" type="text" label="CDR Column name" help="Name of column containing variable region sequences."/>
+        </repeat>
+        <conditional name="umi_correction">
+            <param name="enable" type="boolean" label="UMI bias correction" help="Whether to perform PCR bias correction by filtering for unique UMIs."/>
+            <when value="true">
+                <repeat name="umi_cols" title="UMI Columns">
+                    <param name="name" type="text" label="UMI Column name" help="Name of column containing UMI sequences."/>
+                </repeat>
+            </when>
+        </conditional>
+    </inputs>
+
+    <outputs>
+        <data name="output_abundance" format="tabular" label="${tool.name}: Abundance"/>
+    </outputs>
+
+    <tests>
+        <test>
+            <param name="input_tsv" value="R2+_Lib1A.tsv"/>
+            <param name="framework_col" value="framework"/>
+            <repeat name="cdr_cols">
+                <param name="name" value="CDRL1"/>
+            </repeat>
+            <repeat name="cdr_cols">
+                <param name="name" value="CDRL2"/>
+            </repeat>
+            <repeat name="cdr_cols">
+                <param name="name" value="CDRL3"/>
+            </repeat>
+            <repeat name="cdr_cols">
+                <param name="name" value="CDRH1"/>
+            </repeat>
+            <repeat name="cdr_cols">
+                <param name="name" value="CDRH2"/>
+            </repeat>
+            <repeat name="cdr_cols">
+                <param name="name" value="CDRH3"/>
+            </repeat>
+            <conditional name="umi_correction">
+                <param name="enable" value="false"/>
+            </conditional>
+            <output name="output_abundance" file="Abundance (-correction).tsv"/>
+        </test>
+        <test>
+            <param name="input_tsv" value="R2+_Lib1A.tsv"/>
+            <param name="framework_col" value="framework"/>
+            <repeat name="cdr_cols">
+                <param name="name" value="CDRL1"/>
+            </repeat>
+            <repeat name="cdr_cols">
+                <param name="name" value="CDRL2"/>
+            </repeat>
+            <repeat name="cdr_cols">
+                <param name="name" value="CDRL3"/>
+            </repeat>
+            <repeat name="cdr_cols">
+                <param name="name" value="CDRH1"/>
+            </repeat>
+            <repeat name="cdr_cols">
+                <param name="name" value="CDRH2"/>
+            </repeat>
+            <repeat name="cdr_cols">
+                <param name="name" value="CDRH3"/>
+            </repeat>
+            <conditional name="umi_correction">
+                <param name="enable" value="true"/>
+                <repeat name="umi_cols">
+                    <param name="name" value="5-umi"/>
+                </repeat>
+                <repeat name="umi_cols">
+                    <param name="name" value="3-umi"/>
+                </repeat>
+            </conditional>
+            <output name="output_abundance" file="Abundance (+correction).tsv"/>
+        </test>
+    </tests>
+
+    <help><![CDATA[
+    
+. class:: infomark.
+
+**What it does**
+
+This tool takes a TSV file of Ab sequences, groups the data by variable regions (i.e. CDRs), and counts te abundance of each unique set of CDRs.
+
+It outputs a tabular file of grouped CDRs and counts.
+
+It has the option to correct for PCR amplification bias by filtering for unique UMI barcodes.
+
+Note that header names are case-sensitive.
+
+    ]]></help>
+
+    <citations>
+        <citation type="doi">https://doi.org/10.5281/zenodo.3509134</citation>
+    </citations>
+
+</tool>
