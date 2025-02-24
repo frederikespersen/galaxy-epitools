@@ -28,7 +28,8 @@ def translate_aligned_read(read: AlignedSegment) -> str:
     read_sequence = read.query_sequence
     orf_start = read.query_alignment_start
     codon_trim = len(read_sequence[orf_start:]) % 3
-    return str(Seq(read_sequence[orf_start:-codon_trim]).translate())
+    orf_sequence = read_sequence[orf_start:] if codon_trim == 0 else read_sequence[orf_start:-codon_trim]
+    return str(Seq(orf_sequence).translate())
 
 
 def load_validation_end_patterns(fasta: str,
