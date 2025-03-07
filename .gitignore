@@ -10,3 +10,7 @@ logs/
 
 # Test reports
 **/tool_test_output.*
+
+# Local junk
+__pycache__/
+.DS_Store

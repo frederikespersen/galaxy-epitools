@@ -1,0 +1,145 @@
+<tool id="immunebuilder" name="Predict Antibody Structures" version="1.0">
+
+    <description> with AbodyBuilder2 or NanoBodyBuilder2</description>
+
+    <requirements>
+        <requirement type="package" version="2024.05.21">bioconda::anarci</requirement>
+        <requirement type="package" version="8.2.0">conda-forge::openmm</requirement>
+        <requirement type="package" version="1.11">conda-forge::pdbfixer</requirement>
+        <requirement type="package" version="2.2.3">pandas</requirement>
+        <requirement type="package">pip</requirement>
+    </requirements>
+
+    <command><![CDATA[
+        pip install ImmuneBuilder -q;
+        #if $multiple.enable:
+            #if $multiple.model.model == "AbodyBuilder2":
+                python $__tool_directory__/immunebuilder.py multiple
+                    --model $multiple.model.model
+                    --input-tsv $multiple.model.input_tsv
+                    --id-col $multiple.model.id_col
+                    --hc-col $multiple.model.hc_col
+                    --lc-col $multiple.model.lc_col
+                    --output-dir structures;
+            #else:
+                python $__tool_directory__/immunebuilder.py multiple
+                    --model $multiple.model.model
+                    --input-tsv $multiple.model.input_tsv
+                    --id-col $multiple.model.id_col
+                    --hc-col $multiple.model.hc_col
+                    --output-dir structures;
+            #end if
+        #else:
+            #if $multiple.model.model == "ABodyBuilder2":
+                python $__tool_directory__/immunebuilder.py single
+                    --model $multiple.model.model
+                    --input-hc $multiple.model.input_hc
+                    --input-lc $multiple.model.input_lc
+                    --output-dir structures;
+            #else:
+                python $__tool_directory__/immunebuilder.py single
+                    --model $multiple.model.model
+                    --input-hc $multiple.model.input_hc
+                    --output-dir structures;
+            #end if
+        #end if   
+    ]]></command>
+
+    <inputs>
+        <conditional name="multiple">
+            <param name="enable" type="boolean" label="Submit multiple sequences" help="Whether to submit more than one antibody sequence for structure prediction."/>
+            <when value="true">
+                <conditional name="model">
+                    <param argument="--model" type="select" multiple="false" label="Model" help="Which structure prediction model to use.">
+                        <option value="ABodyBuilder2">ABodyBuilder2 (Fv prediction)</option>
+                        <option value="NanoBodyBuilder2">NanoBodyBuilder2 (VHH Prediction)</option>
+                    </param>
+                    <when value="ABodyBuilder2">
+                        <param argument="--id-col" type="text" value="ID" label="Name of 'ID' column" help="The name of the Ab ID column in the input datasets (case-sensitive)"/>
+                        <param argument="--hc-col" type="text" value="HC" label="Name of 'Heavy Chain' column" help="The name of the heavy chain sequence column in the input datasets (case-sensitive)"/>
+                        <param argument="--lc-col" type="text" value="LC" label="Name of 'Light Chain' column" help="The name of the light chain sequence column in the input datasets (case-sensitive)"/>
+                            </when>
+                    <when value="NanoBodyBuilder2">
+                        <param argument="--id-col" type="text" value="ID" label="Name of 'ID' column" help="The name of the Ab ID column in the input datasets (case-sensitive)"/>
+                        <param argument="--hc-col" type="text" value="HC" label="Name of 'Heavy Chain' column" help="The name of the heavy chain sequence column in the input datasets (case-sensitive)"/>
+                    </when>
+                </conditional>
+            </when>
+            <when value="false">
+                <conditional name="model">
+                    <param argument="--model" type="select" multiple="false" label="Model" help="Which structure prediction model to use.">
+                        <option value="ABodyBuilder2">ABodyBuilder2 (Fv prediction)</option>
+                        <option value="NanoBodyBuilder2">NanoBodyBuilder2 (VHH Prediction)</option>
+                    </param>
+                    <when value="ABodyBuilder2">
+                        <param argument="--input-hc" type="text" label="Heavy chain" help="The amino acid sequence of the antibody heavy chain."/>
+                        <param argument="--input-lc" type="text" label="Light chain" help="The amino acid sequence of the antibody Light chain."/>
+                    </when>
+                    <when value="NanoBodyBuilder2">
+                        <param argument="--input-hc" type="text" label="Heavy chain" help="The amino acid sequence of the VHH heavy chain."/>
+                    </when>
+                </conditional>
+            </when>
+        </conditional>
+    </inputs>
+
+    <outputs>
+        <collection name="output_structures" type="list" label="${tool.name}: Structure PDBs">
+            <discover_datasets pattern="__name__" directory="structures" format="pdb"/>
+        </collection>
+    </outputs>
+
+    <help><![CDATA[
+    
+        . class:: infomark.
+        
+        **What it does**
+        
+        This tool takes amino acid sequences and performs structural prediction with ABodyBuilder2 or NanoBodyBuilder2 from the ImmuneBuilder package.
+
+        **What input does it take**
+
+        For ABodyBuilder2, both a heavy and a light chain sequence must be specified, to model as a Fv.
+        For NanoBodyBuilder2, only a heavy chain must be specified, to model as a VHH.
+
+        For the bulk prediction option, a tabular dataset with 2 (ABodyBuilder2) or 3 (NanoBodyBuilder2) columns must be provided, containing an ID column, a heavy chain column, and (For ABodyBuilder2) a light chain column.
+
+        ``
+        ID	HC	LC
+        hit1	EVQLV...	DIQMT...
+        hit2	QVQLQ...	EIVMT...
+        ``
+        ]]></help>
+
+    <citations>
+        <citation type="bibtex">@article{Eastman2017OpenMM,
+            author    = {Peter Eastman and Jason Swails and John D. Chodera and Robert T. McGibbon and Yutong Zhao and Kyle A. Beauchamp and Lee-Ping Wang and Andrew C. Simmonett and Matthew P. Harrigan and Chaya D. Stern and Brooke E. Wiberg and Vincent R. Gaggioli and Thomas J. Booth and Simon P. Slochower and Mark O. Shirts and J. Mitchell Sidky and Paul M. S. Kaznady and Tom D. Lane and Michael Klein and Robert T. Knight and Jane Sun and Ryan J. P. Smith and Tyler R. Hoffman and Pablo R. P{\'e}rez-Hern{\'a}ndez and Michael F. Wagner and Christopher D. Dotson and Jesse Rodriguez-Garcia and Jan Domanski and David E. Mohr and Daniel L. Miller and Jordan L. Kaus and Sean Sirumalla and J. Christopher MacDermaid and Stefan A. Piana and Robert O. Dror and David E. Shaw and Richard C. Walker and Matthew J. P. Hardy and David L. Mobley and John W. Ponder and Vijay S. Pande and Thomas E. Markland and Lillian T. Chong and Michael R. Shirts and Omkar Ranasinghe and Jeffrey Wagner and David Minh and Jan M. Fass and Yutong Zhao and Robert T. McGibbon and Michael R. Shirts and Vijay S. Pande},
+            title     = {OpenMM 7: Rapid Development of High Performance Algorithms for Molecular Dynamics},
+            journal   = {PLoS Computational Biology},
+            volume    = {13},
+            number    = {7},
+            pages     = {e1005659},
+            year      = {2017},
+            doi       = {10.1371/journal.pcbi.1005659}
+        }</citation>
+        <citation type="bibtex">@misc{pdbfixer,
+            author    = {Peter Eastman},
+            title     = {PDBFixer},
+            year      = {2023},
+            url       = {https://github.com/openmm/pdbfixer}
+        }</citation>
+        <citation type="bibtex">@article{Abanades2023,
+            author = {Abanades, Brennan and Wong, Wing Ki and Boyles, Fergus and Georges, Guy and Bujotzek, Alexander and Deane, Charlotte M.},
+            doi = {10.1038/s42003-023-04927-7},
+            issn = {2399-3642},
+            journal = {Communications Biology},
+            number = {1},
+            pages = {575},
+            title = {ImmuneBuilder: Deep-Learning models for predicting the structures of immune proteins},
+            volume = {6},
+            year = {2023}
+        }</citation>
+        <citation type="doi">https://doi.org/10.5281/zenodo.3509134</citation>
+    </citations>
+
+</tool>

@@ -10,6 +10,7 @@ The following tools, including both the Galaxy tool XML and function python scri
 * ``fasta-to-tabular``: A tool for extracting the header metadata in a FASTA file into a tabular format.
 * ``lima``: A simple implementation of PacBio's [Lima](https://lima.how) for demultiplexing reads. This tool developed with a very custom set of settings and is not provided for out-of-box use, but for inspiration.
 * ``translate-sam``: A tool for translating reads mapped to a reference template, in the reading frame of the template.
+* ``immunebuilder``: A tool for running structure prediction with ABodyBuilder2 or NanoBodyBuilder2 from [ImmuneBuilder](https://github.com/oxpig/ImmuneBuilder).
 
 ## Getting started
 Add these tools to your local Galaxy server instance in ``galaxy/tools/epitools/``
