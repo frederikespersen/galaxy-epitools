@@ -26,6 +26,7 @@ and add the following section to your ``galaxy/config/tools_conf.xml``:
     <tool file="epitools/fasta-to-tabular/fasta-to-tabular.xml"/>
     <tool file="epitools/lima/lima.xml"/>
     <tool file="epitools/translate-sam/translate-sam.xml"/>
+    <tool file="epitools/immunebuilder/immunebuilder.xml">
   </section>
   <!-- [... other tools ...] -->
 </toolbox>
