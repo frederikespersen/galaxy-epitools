@@ -55,11 +55,13 @@
                         <option value="NanoBodyBuilder2">NanoBodyBuilder2 (VHH Prediction)</option>
                     </param>
                     <when value="ABodyBuilder2">
+                        <param argument="--input-tsv" type="data" format="tabular" label="Input TSV" help="TSV file containing IDs, heavy chain sequences, and light chain sequences."/>
                         <param argument="--id-col" type="text" value="ID" label="Name of 'ID' column" help="The name of the Ab ID column in the input datasets (case-sensitive)"/>
                         <param argument="--hc-col" type="text" value="HC" label="Name of 'Heavy Chain' column" help="The name of the heavy chain sequence column in the input datasets (case-sensitive)"/>
                         <param argument="--lc-col" type="text" value="LC" label="Name of 'Light Chain' column" help="The name of the light chain sequence column in the input datasets (case-sensitive)"/>
                             </when>
                     <when value="NanoBodyBuilder2">
+                        <param argument="--input-tsv" type="data" format="tabular" label="Input TSV" help="TSV file containing IDs and heavy chain sequences."/>
                         <param argument="--id-col" type="text" value="ID" label="Name of 'ID' column" help="The name of the Ab ID column in the input datasets (case-sensitive)"/>
                         <param argument="--hc-col" type="text" value="HC" label="Name of 'Heavy Chain' column" help="The name of the heavy chain sequence column in the input datasets (case-sensitive)"/>
                     </when>
