@@ -11,6 +11,8 @@ The following tools, including both the Galaxy tool XML and function python scri
 * ``lima``: A simple implementation of PacBio's [Lima](https://lima.how) for demultiplexing reads. This tool developed with a very custom set of settings and is not provided for out-of-box use, but for inspiration.
 * ``translate-sam``: A tool for translating reads mapped to a reference template, in the reading frame of the template.
 * ``immunebuilder``: A tool for running structure prediction with ABodyBuilder2 or NanoBodyBuilder2 from [ImmuneBuilder](https://github.com/oxpig/ImmuneBuilder).
+* ``space2``: A tool for epitope clustering antibodies by their structure with [SPACE2](https://github.com/oxpig/SPACE2).
+
 
 ## Getting started
 Add these tools to your local Galaxy server instance in ``galaxy/tools/epitools/``
@@ -27,6 +29,7 @@ and add the following section to your ``galaxy/config/tools_conf.xml``:
     <tool file="epitools/lima/lima.xml"/>
     <tool file="epitools/translate-sam/translate-sam.xml"/>
     <tool file="epitools/immunebuilder/immunebuilder.xml">
+    <tool file="epitools/space2/space2.xml">
   </section>
   <!-- [... other tools ...] -->
 </toolbox>
