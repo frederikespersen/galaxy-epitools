@@ -25,10 +25,11 @@ def translate_aligned_read(read: AlignedSegment) -> str:
     :param read: An aligned SAM read parsed with ``pysam.AlignmentFile()``.
     :return: A translation of the read in the alignment reading frame.
     """
-    read_sequence = read.query_sequence
+    read_sequence = read.query_sequence 
     orf_start = read.query_alignment_start
     codon_trim = len(read_sequence[orf_start:]) % 3
     orf_sequence = read_sequence[orf_start:] if codon_trim == 0 else read_sequence[orf_start:-codon_trim]
+    orf_sequence = orf_sequence if not read.is_reverse else str(Seq(orf_sequence).reverse_complement())
     return str(Seq(orf_sequence).translate())
 
 
