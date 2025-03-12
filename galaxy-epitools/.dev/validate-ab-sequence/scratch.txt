@@ -1,0 +1,71 @@
+from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+
+def load_validation_end_patterns(fasta: str,
+                                 n_last: int,
+                                 n_sub: int,
+                                 fasta_type: Literal['dna', 'aa']= 'dna') -> dict[str, str]:
+    """
+    Assembles substitution-sensitive regex patterns from the C-terminal-ends of
+    loaded template sequences.
+
+    :param fasta: Template sequences, from which to generate C-ter regex patterns.
+    :param n_last: How many of the C-ter template residues to use for patterns.
+    :param n_sub: How many substitutions to tolerate in the regex pattern.
+    :param fasta_type: Whether the templates are written as nucleotides or amino acids.
+    :return: A dictionary of a C-ter regex pattern per loaded template.
+    """
+    # Checking that any end residues are specified for validation
+    assert n_last > 0, "Argument `n_last` must be ≥ 0!"
+
+    # Loading templates, and translating if DNA
+    fasta = SeqIO.parse(fasta, format='fasta')
+    if fasta_type == 'dna':
+        templates = {record.id: str(Seq(record.seq).translate()) for record in fasta}
+    elif fasta_type == 'aa':
+        templates = {record.id: str(record.seq) for record in fasta}
+    else:
+        raise ValueError("Specify whether FASTA templates are in nucleotides `dna` or amino acids `aa`!")
+
+    # Extracting end residues
+    validation_end_seqs = {name: seq[-n_last:] for name, seq in templates.items()}
+
+    # Generating patterns
+    validation_patterns = {name: end_pattern(seq, n_sub) for name, seq in validation_end_seqs.items()}
+    return validation_patterns
+
+
+def end_pattern(pattern: str,
+                n_sub: int) -> str:
+    """
+    Takes a regex pattern, assembles a derived regex pattern that tolerates
+    a set amount of substitutions, and which returns a group including the
+    original pattern and any leading text in a matching string.
+
+    If there is no match within the substitution threshold, this regex
+    pattern return no groups (i.e. ``re.match(str,pattern)`` returns ``None``).
+
+    :param pattern: A regex pattern.
+    :param n_sub: How many substitutions to tolerate for match to ``pattern``.
+    :return: A substitution-sensitive derived regex pattern that returns
+    matches including leading strings.
+    """
+    return "(^.*" + pattern + ")"+"{s<=" + str(n_sub) + "}"
+
+
+# Loading patterns for FRW4 validation
+validation_patterns = load_validation_end_patterns(templates_fasta,
+                                                    val_n_last, val_n_sub,
+                                                    fasta_type)
+
+framework = read.reference_name
+ab_seq = re.search(validation_patterns[framework], aa_seq)
+if ab_seq is None:
+    continue
+else:
+    ab_seq = Seq(ab_seq.group())
+
+# Skipping truncated reads
+if '*' in ab_seq:
+    continue
