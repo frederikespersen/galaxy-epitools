@@ -13,11 +13,9 @@
         cp numbering_raw_H.csv numbering_H.csv;
         cp numbering_raw_KL.csv numbering_KL.csv;
         #for $filter in $filters:
-            col_idx=\$(csvgrep -n 'numbering_${filter.chain}.csv' | awk -F: '{gsub(/^[ \t]+|[ \t]+$/, "", $2); if ($2 == "${filter.position}") print $1}');
-            csvgrep 'numbering_${filter.chain}.csv'
-                -c '$col_idx' 
-                -m '${filter.value}' 
-                > 'numbering_${filter.chain}.csv';
+            python $__tool_directory__/filter-csv.py 
+                -i 'numbering_${filter.chain}.csv'
+                '${filter.position}=${filter.value}';
         #end for
         mkdir -p regions;
         #for $region in $regions:
@@ -117,4 +115,3 @@ There is an option to filter the ANARCI numbering entries by their amino acid in
     </citations>
 
 </tool>
-
