@@ -13,7 +13,7 @@
         cp numbering_raw_H.csv numbering_H.csv;
         cp numbering_raw_KL.csv numbering_KL.csv;
         #for $filter in $filters:
-            col_idx=$(csvgrep -n 'numbering_${filter.chain}.csv' | awk -F: '{gsub(/^[ \t]+|[ \t]+$/, "", $2); if ($2 == "${filter.position}") print $1}');
+            col_idx=\$(csvgrep -n 'numbering_${filter.chain}.csv' | awk -F: '{gsub(/^[ \t]+|[ \t]+$/, "", $2); if ($2 == "${filter.position}") print $1}');
             csvgrep 'numbering_${filter.chain}.csv'
                 -c '$col_idx' 
                 -m '${filter.value}' 
