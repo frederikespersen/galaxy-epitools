@@ -54,7 +54,7 @@ def translate_aligned_read(read: AlignedSegment,
     if truncate:
         read_translation = read_translation.split('*')[0]
     
-    return str(Seq(orf_sequence).translate())
+    return read_translation
 
 
 def translate_sam(input_sam: str,
@@ -73,7 +73,7 @@ def translate_sam(input_sam: str,
     
     An optional parameter ``truncate`` specifies whether to truncate AA sequences at first stop codon '*'.
 
-    FASTA entries are returned with an ID corresponding to the original read ID.
+    FASTA entries are returned with an ID corresponding to the original read ID, and a description denoting which reference the read was mapped to ``mapped_to``.
 
     :param input_sam: Path for the input SAM.
     :param output_fasta: Path for the output FASTA. If `None`, reuses basename of ``input_fasta``  (i.e. ``sample1.sam`` => ``sample1.fasta``).
@@ -81,10 +81,6 @@ def translate_sam(input_sam: str,
     :param truncate: Whether to limit translation to the first stop codon '*'.
     :param val_min_mapq: The minimum ``minimap2`` mapping quality to accept (Maximum ``60``).
     """
-
-    # Reusing input file name, if no --output-fasta is passed
-    if output_fasta is None:
-        output_fasta = os.path.basename(input_sam).replace('.sam', '.fasta')
 
     # Initializing a FASTA record container
     records = []
@@ -101,10 +97,15 @@ def translate_sam(input_sam: str,
             aa_seq = translate_aligned_read(read, within_mapping_only, truncate)
 
             # Formatting translation as FASTA record
-            record = SeqRecord(aa_seq,
-                               id=read.query_name)
+            record = SeqRecord(Seq(aa_seq),
+                               id=read.query_name,
+                               description=f"mapped_to={read.reference_name}")
             records.append(record)
-
+            
+    # Reusing input file name, if no --output-fasta is passed
+    if output_fasta is None:
+        output_fasta = os.path.basename(input_sam).replace('.sam', '.fasta')
+        
     # Saving records to FASTA
     if records:
         with open(output_fasta, 'w') as fasta:
