@@ -23,9 +23,9 @@
 
     <inputs>
         <param argument="--input-sam" type="data" format="sam" label="Input SAM file" help="SAM file aligned to template."/>
-        <param argument="--val-min-mapq" type="integer" min="0" max="60" value="60" label="Minimum mapping quality" help="The minimum ``minimap2`` mapping quality to accept (Maximum 60 is recommended)."/>
-        <param argument="--truncate" type="boolean" label="Truncate at stop codon" help="If selected, the sequence will be truncated at the first stop codon ('*')."/>
-        <param argument="--within-mapping-only" type="boolean" label="Translate only within mapping region" help="If selected, only the mapped portion of the read will be translated."/>
+        <param argument="--val-min-mapq" type="integer" min="0" max="60" optional="true" value="60" label="Minimum mapping quality" help="The minimum ``minimap2`` mapping quality to accept (Maximum 60 is recommended)."/>
+        <param argument="--truncate" type="boolean" optional="true" checked="true" label="Truncate at stop codon" help="If selected, the sequence will be truncated at the first stop codon ('*')."/>
+        <param argument="--within-mapping-only" type="boolean" optional="true" checked="false" label="Translate only within mapping region" help="If selected, only the mapped portion of the read will be translated."/>
     </inputs>
 
     <outputs>
