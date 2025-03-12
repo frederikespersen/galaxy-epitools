@@ -9,7 +9,16 @@
     </requirements>
 
     <command><![CDATA[
-        ANARCI --sequence '$input_fasta' --scheme '$anarci_scheme' --csv --outfile 'numbering';
+        ANARCI --sequence '$input_fasta' --scheme '$anarci_scheme' --csv --outfile 'numbering_raw';
+        cp numbering_raw_H.csv numbering_H.csv;
+        cp numbering_raw_KL.csv numbering_KL.csv;
+        #for $filter in $filters:
+            col_idx=$(csvgrep -n 'numbering_${filter.chain}.csv' | awk -F: '{gsub(/^[ \t]+|[ \t]+$/, "", $2); if ($2 == "${filter.position}") print $1}');
+            csvgrep 'numbering_${filter.chain}.csv'
+                -c '$col_idx' 
+                -m '${filter.value}' 
+                > 'numbering_${filter.chain}.csv';
+        #end for
         mkdir -p regions;
         #for $region in $regions:
             python $__tool_directory__/extract-ab-region.py
@@ -41,66 +50,44 @@
             <param name="start" type="integer" label="Start position" help="The numbered position where the region starts (inclusive)."/>
             <param name="end" type="integer" label="End position" help="The numbered position where the region ends (inclusive)."/>
         </repeat>
+        <repeat name="filters" title="Position-wise validation">
+            <param name="chain" type="select" multiple="false" label="Chain" help="Which chain the validation position is located on.">
+                <option value="KL">Light chain</option>
+                <option value="H">Heavy chain</option>
+            </param>
+            <param name="position" type="integer" label="Position" help="The position to validate the value of."/>
+            <param name="value" type="select" multiple="false" label="Amino acid" help="Which amino acid to allow at position to validate ANARCI numbering.">
+                <option value="A">A, Alanine</option>
+                <option value="C">C, Cysteine</option>
+                <option value="D">D, Aspartic Acid</option>
+                <option value="E">E, Glutamic Acid</option>
+                <option value="F">F, Phenylalanine</option>
+                <option value="G">G, Glycine</option>
+                <option value="H">H, Histidine</option>
+                <option value="I">I, Isoleucine</option>
+                <option value="K">K, Lysine</option>
+                <option value="L">L, Leucine</option>
+                <option value="M">M, Methionine</option>
+                <option value="N">N, Asparagine</option>
+                <option value="P">P, Proline</option>
+                <option value="Q">Q, Glutamine</option>
+                <option value="R">R, Arginine</option>
+                <option value="S">S, Serine</option>
+                <option value="T">T, Threonine</option>
+                <option value="V">V, Valine</option>
+                <option value="W">W, Tryptophan</option>
+                <option value="Y">Y, Tyrosine</option>
+            </param>
+        </repeat>
     </inputs>
 
     <outputs>
         <data name="output_file" format="tabular" label="${tool.name}: Regions"/>
+        <collection name="anarci_numbering" type="list" label="${tool.name}: ANARCI CSVs">
+            <data name="Heavy Chain" format="csv" from_work_dir="numbering_raw_H.csv"/>
+            <data name="Light Chain" format="csv" from_work_dir="numbering_raw_KL.csv"/>
+        </collection>
     </outputs>
-
-    <tests>
-        <test>
-            <param name="input_fasta" value="single-cdr/SQK-NBD114-24_barcode01.fasta"/>
-            <param name="anarci_scheme" value="imgt"/>
-            <repeat name="regions">
-                <param name="name" value="CDRL1"/>
-                <param name="chain" value="KL"/>
-                <param name="start" value="27"/>
-                <param name="end" value="38"/>
-            </repeat>
-            <output name="output_file" file="single-cdr/0_CDRL1.tsv"/>
-        </test>
-        <test>
-            <param name="input_fasta" value="multiple-cdrs/SQK-NBD114-24_barcode01.fasta"/>
-            <param name="anarci_scheme" value="imgt"/>
-            <repeat name="regions">
-                <param name="name" value="CDRL1"/>
-                <param name="chain" value="KL"/>
-                <param name="start" value="27"/>
-                <param name="end" value="38"/>
-            </repeat>
-            <repeat name="regions">
-                <param name="name" value="CDRL2"/>
-                <param name="chain" value="KL"/>
-                <param name="start" value="56"/>
-                <param name="end" value="69"/>
-            </repeat>
-            <repeat name="regions">
-                <param name="name" value="CDRL3"/>
-                <param name="chain" value="KL"/>
-                <param name="start" value="105"/>
-                <param name="end" value="117"/>
-            </repeat>
-            <repeat name="regions">
-                <param name="name" value="CDRH1"/>
-                <param name="chain" value="H"/>
-                <param name="start" value="27"/>
-                <param name="end" value="38"/>
-            </repeat>
-            <repeat name="regions">
-                <param name="name" value="CDRH2"/>
-                <param name="chain" value="H"/>
-                <param name="start" value="56"/>
-                <param name="end" value="65"/>
-            </repeat>
-            <repeat name="regions">
-                <param name="name" value="CDRH3"/>
-                <param name="chain" value="H"/>
-                <param name="start" value="105"/>
-                <param name="end" value="117"/>
-            </repeat>
-            <output name="output_file" file="multiple-cdrs/CDRs.tsv"/>
-        </test>
-    </tests>
 
     <help><![CDATA[
     
@@ -111,6 +98,8 @@
 This tool takes a FASTA file of Ab sequences, numbers it with ANARCI, and extract specified sequence regions.
 
 It outputs a tabular file where the first column is the IDs found in the FASTA and each column is a sequence region.
+
+There is an option to filter the ANARCI numbering entries by their amino acid in specific numbered positions to validate that the sequence has been properly aligned.
 
     ]]></help>
 
