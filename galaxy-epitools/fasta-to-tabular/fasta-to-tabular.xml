@@ -37,7 +37,7 @@
 
     <help><![CDATA[
     
-. class:: infomark.
+.. class:: infomark.
 
 **What it does**
 This tool takes a FASTA file and parses it into a tab-separated format (.tsv).
