@@ -1,0 +1,55 @@
+<tool id="schrodinger-prot-desc" name="Schrodinger Protein Descriptors" version="1.0">
+
+    <description> for developability assesment</description>
+
+    <requirements>
+    </requirements>
+
+    <command><![CDATA[
+    /home/epibio/Software/Schrodinger/suites2024-3/run
+        -FROM psp calc_protein_descriptors.py
+            --inputdir $pdb_structures
+            --outputdir protein_desc_output
+            --scheme $scheme
+            --pH $ph
+        -WAIT;
+    
+    ]]></command>
+
+    <inputs>
+        <param argument="--pdb-structures" type="data_collection" format="pdb" label="PDB structures" help="A collection of PDB structures for which to calculate schrodinger protein descriptors."/>
+        <param argument="--scheme" type="select" multiple="false" label="Numbering scheme" help="The antibody numbering scheme to pass to schrodinger">
+            <option value="Kabat" selected="true">Kabat</option>
+            <option value="IMGT">IMGT</option>
+            <option value="Chothia">Chothia</option>
+            <option value="EnhancedChothia">Enhanced Chothia</option>
+            <option value="AHo">Aho</option>
+        </param>
+        <param argument="--ph" type="float" value="7.0" min="0" max="14" label="pH" help="The pH at which to calculate protein descriptors at; Will affect protonation of charged residues."/>
+    </inputs>
+
+    <outputs>
+        <data name="output_csv" format="csv" label="${tool.name}: Protein Descriptors CSV" from_work_dir="protein_desc_output/protein_descriptors.csv"/>
+    </outputs>
+
+    <help><![CDATA[
+    
+.. class:: infomark.
+
+**What it does**
+
+This tool takes a collection of PDBs containing structures of Abs.
+Using the Schrodinger *Protein Descriptors Calculation* task, it predicts a set of descriptive measures for each structure.
+It outputs a CSV file with an entry for each Ab structure.
+
+Note that this Schrodinger tool will submit jobs to the limited computational license, which will affect the cue of running jobs for other Schrodinger users using the same license server.
+Take this into account before running large sets of PDBs.
+
+    ]]></help>
+
+    <citations>
+        <citation type="doi">10.1002/prot.25594</citation>
+        <citation type="doi">10.1002/minf.202100240</citation>
+    </citations>
+
+</tool>
