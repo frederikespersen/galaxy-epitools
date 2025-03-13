@@ -38,9 +38,13 @@ def abundance_ngs_dataset(output_tsv: str = None,
     # Loading data
     df, (cdr_cols, umi_cols) = load_ngs_dataset(**load_ngs_dataset_kwargs)
     
-    # Removing redundant UMI pairs
+    # Removing redundant UMI pairs (where avilable)
     if umi_cols != []:
-        df = df.drop_duplicates(subset=umi_cols).drop(umi_cols, axis=1)
+        has_umis = df[umi_cols].notna().all(axis=1)
+        df = pd.concat([
+            df[~has_umis],
+            df[has_umis].drop_duplicates(subset=umi_cols)
+        ]).drop(umi_cols, axis=1)
     
     # Remove hits with empty CDRs
     df = df.dropna(subset=cdr_cols)
