@@ -89,9 +89,9 @@ if __name__ == "__main__":
     multiple_parser = subparsers.add_parser("multiple", help="Predict multiple antibody structures")
     multiple_parser.add_argument("--model", choices=["ABodyBuilder2", "NanoBodyBuilder2"], required=True)
     multiple_parser.add_argument("--input-tsv", required=True, help="TSV file with antibody sequences")
-    multiple_parser.add_argument("--id-col", type=str, required=False, default='ID', help="Name of the ID column [Default 'ID']")
-    multiple_parser.add_argument("--hc-col", type=str, required=False, default='HC', help="Name of the Heavy Chain column [Default 'HC']")
-    multiple_parser.add_argument("--lc-col", type=str, required=False, default='LC', help="Name of the Light Chain column [Default 'LC']")
+    multiple_parser.add_argument("--id-col", type=str, required=False, default='id', help="Name of the ID column [Default 'ID']")
+    multiple_parser.add_argument("--hc-col", type=str, required=False, default='hc', help="Name of the Heavy Chain column [Default 'HC']")
+    multiple_parser.add_argument("--lc-col", type=str, required=False, default='lc', help="Name of the Light Chain column [Default 'LC']")
     multiple_parser.add_argument("--output-dir", required=True, help="Output directory")
     
     # ················································································· #
