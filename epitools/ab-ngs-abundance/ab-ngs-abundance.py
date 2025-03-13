@@ -22,7 +22,7 @@ def load_ngs_dataset(input_tsv: str,
     
     # Assembling data
     df = pd.concat([
-        pd.DataFrame({'Framework': data[framework_col]}),
+        pd.DataFrame({'framework': data[framework_col]}),
         data[cdr_cols],
         data[umi_cols]
         ], axis=1)
@@ -49,9 +49,9 @@ def abundance_ngs_dataset(output_tsv: str = None,
     df = df.value_counts().reset_index().rename({'count': 'Count'}, axis=1)
     
     # Determining primary framework (assumed to be library) and removing contaminants
-    framework_counts = df.value_counts('Framework')
+    framework_counts = df.value_counts('framework')
     primary_framework = framework_counts.index[framework_counts.argmax()]
-    df = df[df['Framework'] == primary_framework]
+    df = df[df['framework'] == primary_framework]
     
     # Calculating normalized counts
     if normalize:
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Calculate antibody abundance in a NGS dataset.")
     parser.add_argument("--input-tsv", type=str, required=True, help="Path to the input TSV dataset")
     parser.add_argument("--framework-col", type=str, required=False, default='framework', help="Name of the framework column [Default 'framework']")
-    parser.add_argument("--cdr-cols", type=str, nargs='+', required=False, default=['CDRL1','CDRL2','CDRL3','CDRH1','CDRH2','CDRH3'], help="Names of CDR columns [Default ['CDRL1','CDRL2','CDRL3','CDRH1','CDRH2','CDRH3']]")
+    parser.add_argument("--cdr-cols", type=str, nargs='+', required=False, default=['cdrl1','cdrl2','cdrl3','cdrh1','cdrh2','cdrh3'], help="Names of CDR columns [Default ['cdrl1','cdrl2','cdrl3','cdrh1','cdrh2','cdrh3']]")
     parser.add_argument("--umi-cols", type=str, nargs='+', required=False, default=[], help="Names of UMI columns [If not provided, no UMI-bias correction is performed]")
     parser.add_argument("--output-tsv", default='ab-abundance.tsv', help="Path to save the processed dataset to as TSV")
     
