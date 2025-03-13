@@ -37,7 +37,7 @@
             <option value="chothia">Chothia</option>
             <option value="martin">Extended Chothia (Martin)</option>
             <option value="wolfguy">Wolfguy</option>
-            <option value="Aho">Aho</option>
+            <option value="aho">AHo</option>
         </param>
         <repeat name="regions" title="Region">
             <param name="name" type="text" label="Region name" help="The name that will be used for the region."/>
