@@ -65,6 +65,7 @@ This tool takes one or more amino acid sequences and finds any specified liabili
     ]]></help>
 
     <citations>
+        <citation type="doi">https://doi.org/10.5281/zenodo.3509134</citation>
     </citations>
 
 </tool>
