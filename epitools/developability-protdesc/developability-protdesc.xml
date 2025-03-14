@@ -4,6 +4,7 @@
     
     <requirements>
         <requirement type="package" version="2.2.3">pandas</requirement>
+        <requirement type="package" version="1.26.4">numpy</requirement>
     </requirements>
 
     <command>
@@ -32,8 +33,10 @@
     <citations>
         <citation type="doi">10.1002/prot.25594</citation>
         <citation type="doi">10.1002/minf.202100240</citation>
-        <citation type="doi">https://doi.org/10.1073/pnas.1810576116</citation>
-        <citation type="doi">https://doi.org/10.1080/19420862.2022.2080628</citation>
+        <citation type="doi">10.1073/pnas.1810576116</citation>
+        <citation type="doi">10.1080/19420862.2022.2080628</citation>
+        <citation type="doi">10.1038/s41586-020-2649-2</citation>
+        <citation type="doi">10.5281/zenodo.3509134</citation>
     </citations>
 
 </tool>
