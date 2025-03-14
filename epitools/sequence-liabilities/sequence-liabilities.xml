@@ -1,0 +1,70 @@
+<tool id="sequence-liabilities" name="Find Sequence Liabilities" version="1.0">
+
+    <description> using regular expressions</description>
+
+    <requirements>
+        <requirement type="package" version="2.2.3">pandas</requirement>
+        <requirement type="package" version="1.84">biopython</requirement>
+    </requirements>
+
+    <command><![CDATA[
+    #if $input.multiple:
+        python $__tool_directory__/sequence-liabilities.py multiple
+            --input-fasta $input.input_fasta
+            --liability-patterns 
+                #for $liability in $liabilities:
+                    "'$liability.name'=$liability.patterns"
+                #end for
+            --format $format
+            --output-tsv $output_tsv;
+    #else:
+        python $__tool_directory__/sequence-liabilities.py single
+            --input-sequence $input.input_sequence
+            --liability-patterns 
+                #for $liability in $liabilities:
+                    "'$liability.name'=$liability.patterns"
+                #end for
+            --format $format
+            --output-tsv $output_tsv;
+    #end if
+    ]]>]</command>
+
+    <inputs>
+        <conditional name="input">
+            <param name="multiple" type="boolean" label="Submit multiple sequences" help="Whether to submit more than one sequence for liability detection."/>
+            <when value="true">
+                <param argument="--input-fasta" type="data" format="fasta" label="Input FASTA" help="FASTA file with sequences to find sequence liabilities in."/>
+            </when>
+            <when value="false">
+                <param argument="--input-sequence" type="text" label="Input Sequence" help="Amino acid sequence to find sequence liabilities in."/>
+            </when>
+        </conditional>
+        <param argument="--format" type="select" multiple="false" label="Format" help="What format to return results in">
+            <option value="records" selected="true">Each liability as a single row</option>
+            <option value="condensed" selected="true">Each sequence as a single row</option>
+            <option value="pretty" selected="true">An alignment of each sequence and its liabilities</option>
+        </param>
+        <repeat name="liabilities" title="Liabilities">
+            <param name="name" type="text" label="Name" help="Name of liability type, i.e. 'Glycosylation'."/>
+            <param name="patterns" type="text" label="Pattenrs" help="A comma-separated list of regular expressions to search for liabilities with, i.e. 'N[^P]S,N[^P]T'."/>
+        </repeat>
+    </inputs>
+
+    <outputs>
+        <data name="output_tsv" format="tabular" label="${tool.name}: Liabilities"/>
+    </outputs>
+
+    <help><![CDATA[
+    
+.. class:: infomark.
+
+**What it does**
+
+This tool takes one or more amino acid sequences and finds any specified liabilities matching regular expressions.
+
+    ]]></help>
+
+    <citations>
+    </citations>
+
+</tool>
