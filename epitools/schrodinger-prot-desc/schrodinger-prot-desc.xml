@@ -13,7 +13,6 @@
             --scheme $scheme
             --pH $ph
         -WAIT;
-    
     ]]></command>
 
     <inputs>
