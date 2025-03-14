@@ -5,9 +5,6 @@
 # Imports
 import argparse
 import pandas as pd
-from collections.abc import Iterable
-from typing import Literal
-import itertools
 
 
 # ················································································· #
