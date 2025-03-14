@@ -6,7 +6,7 @@
     </requirements>
 
     <command><![CDATA[
-    /home/epibio/Software/Schrodinger/suites2024-3/run
+    $schrodinger_path/run
         -FROM psp calc_protein_descriptors.py
             --inputdir $pdb_structures
             --outputdir protein_desc_output
@@ -17,14 +17,15 @@
 
     <inputs>
         <param argument="--pdb-structures" type="data_collection" format="pdb" label="PDB structures" help="A collection of PDB structures for which to calculate schrodinger protein descriptors."/>
-        <param argument="--scheme" type="select" multiple="false" label="Numbering scheme" help="The antibody numbering scheme to pass to schrodinger">
+        <param argument="--scheme" type="select" multiple="false" optional="true" label="Numbering scheme" help="The antibody numbering scheme to pass to schrodinger">
             <option value="Kabat" selected="true">Kabat</option>
             <option value="IMGT">IMGT</option>
             <option value="Chothia">Chothia</option>
             <option value="EnhancedChothia">Enhanced Chothia</option>
             <option value="AHo">Aho</option>
         </param>
-        <param argument="--ph" type="float" value="7.4" min="0" max="14" label="pH" help="The pH at which to calculate protein descriptors at; Will affect protonation of charged residues."/>
+        <param argument="--ph" type="float" optional="true" value="7.4" min="0" max="14" label="pH" help="The pH at which to calculate protein descriptors at; Will affect protonation of charged residues."/>
+        <param name="schrodinger_path" type="text" value="/home/epibio/Software/Schrodinger/suites2024-3" optional="true" label="Path to Schrodinger Suite" help="The full path from root to the Schrodinger Suite installation. By default, Schrodinger installs in '/opt/schrodinger/suitesYYYY-V'."/>
     </inputs>
 
     <outputs>
