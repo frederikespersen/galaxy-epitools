@@ -24,7 +24,7 @@
             <option value="EnhancedChothia">Enhanced Chothia</option>
             <option value="AHo">Aho</option>
         </param>
-        <param argument="--ph" type="float" value="7.0" min="0" max="14" label="pH" help="The pH at which to calculate protein descriptors at; Will affect protonation of charged residues."/>
+        <param argument="--ph" type="float" value="7.4" min="0" max="14" label="pH" help="The pH at which to calculate protein descriptors at; Will affect protonation of charged residues."/>
     </inputs>
 
     <outputs>
