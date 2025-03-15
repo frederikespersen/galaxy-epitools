@@ -34,6 +34,7 @@ def calc_tada(schroprotdesc_csv: str,
         
     tada = pd.DataFrame({'TA-DA': tada}, index=schro_prot_desc.index)
 
+    # Returning or writing results
     if output_tsv is None:
             return tada
     else:
