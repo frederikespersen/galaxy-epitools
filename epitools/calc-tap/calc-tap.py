@@ -384,7 +384,7 @@ def calc_tap(input_pdbs: list[str],
              output_tsv: str=None) -> pd.DataFrame | None:
     """
     Takes one or more paths to ABodyBuilder2-predicted antibody structures as PDB files,
-    returns a table of Therapeutic Antibody Profiler (TAP)[https://doi.org/10.1073/pnas.1810576116] measures from the Charlotte Dean lab.
+    returns a table of [Therapeutic Antibody Profiler (TAP)](https://doi.org/10.1073/pnas.1810576116) measures from the Charlotte Dean lab.
     
     :param input_pdbs: A list of PDB paths. PDB files must have a ``H`` and ``L`` chain and have residue indexing that matches IMGT numbering.
     :param output_tsv: The path to write output to as TSV. If none is specified, a dataframe will be returned.
