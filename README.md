@@ -6,7 +6,8 @@ This repository contains a set of custom tools for Galaxy Server. These tools ar
 The following tools, including both the Galaxy tool XML and function python scripts, are found in ``galaxy-epitools/``:
 * ``ab-ngs-abundance``: A tool for counting distinct Ab sequences by their framework and CDRs, correcting for bias via metadata.
 * ``demultiplex-dorado``: A tool for demultiplexing Oxford Nanopore reads by the barcodes called by Dorado during basecalling.
-* ``developability-protdesc``: A tool for curating Ab developability measures from Schrodinger protein descriptors (See ``schrodinger-prot-desc``).
+* ``calc-tap``: A tool for calculating TAP Ab developability scores from ABodyBuilder2 models (See ``immunebuilder``).
+* ``calc-tada``: A tool for calculating TA-DA Ab developability scores from Schrodinger protein descriptors (See ``schrodinger-prot-desc``).
 * ``extract-ab-region``: A tool for extracting specific antibody regions according to their numbering by [ANARCI](https://github.com/oxpig/ANARCI).
 * ``fasta-to-tabular``: A tool for extracting the header metadata in a FASTA file into a tabular format.
 * ``immunebuilder``: A tool for running structure prediction with ABodyBuilder2 or NanoBodyBuilder2 from [ImmuneBuilder](https://github.com/oxpig/ImmuneBuilder).
