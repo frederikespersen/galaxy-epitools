@@ -13,7 +13,6 @@ The following tools, including both the Galaxy tool XML and function python scri
 * ``immunebuilder``: A tool for running structure prediction with ABodyBuilder2 or NanoBodyBuilder2 from [ImmuneBuilder](https://github.com/oxpig/ImmuneBuilder).
 * ``lima``: A small implementation of PacBio's [Lima](https://lima.how) for demultiplexing reads. This tool is developed with a very custom set of settings and is not intended for general use.
 * ``schrodinger-prot-desc``: A tool for calculating Ab protein descriptors with [Schrodinger](https://support.schrodinger.com/s/article/827119).
-* ``sequence-distance-matrix``: A tool for calculating sequence distance to reference sequences.
 * ``sequence-liabilities``: A tool for finding sequence liabilities with regular expressions.
 * ``space2``: A tool for epitope clustering antibodies by their structure with [SPACE2](https://github.com/oxpig/SPACE2).
 * ``translate-sam``: A tool for translating reads mapped to a reference template, in the reading frame of the template.
@@ -36,7 +35,6 @@ and add the following section to your ``galaxy/config/tools_conf.xml``:
     <tool file="epitools/immunebuilder/immunebuilder.xml"/>
     <tool file="epitools/lima/lima.xml"/>
     <tool file="epitools/schrodinger-prot-desc/schrodinger-prot-desc.xml"/>
-    <tool file="epitools/sequence-distance-matrix/sequence-distance-matrix.xml"/>
     <tool file="epitools/sequence-liabilities/sequence-liabilities.xml"/>
     <tool file="epitools/space2/space2.xml"/>
     <tool file="epitools/translate-sam/translate-sam.xml"/>
