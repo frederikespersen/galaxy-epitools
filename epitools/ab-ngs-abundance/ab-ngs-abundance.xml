@@ -40,7 +40,7 @@
 
     <inputs>
         <param argument="--input-tsv" type="data" format="tabular,tsv" label="Input TSV" help="TSV file with preprocessed NGS reads"/>
-        <param argument="--decontaminate" type="bool" selected="true" label="Remove contaminants" help="If this is selected, all entries that do not have the most abundant framework are treated as contaminants and are filtered away."/>
+        <param argument="--decontaminate" type="boolean" selected="true" optional="true" label="Remove contaminants" help="If this is selected, all entries that do not have the most abundant framework are treated as contaminants and are filtered away."/>
         <param argument="--framework-col" type="text" value="framework" label="Name of 'Framework' column" help="The name of the framework column in the input datasets (case-sensitive)"/>
         <repeat name="cdr_cols" title="CDR Columns">
             <param name="name" type="text" label="CDR Column name" help="Name of column containing variable region sequences."/>

@@ -10,12 +10,8 @@
 
     <command><![CDATA[
         ANARCI --sequence '$input_fasta' --scheme '$anarci_scheme' --csv --outfile 'numbering_raw';
-        #if [ -f numbering_raw_H.csv ]:
-            cp numbering_raw_H.csv numbering_H.csv;
-        #end if
-        #if [ -f numbering_raw_KL.csv ]:
-            cp numbering_raw_KL.csv numbering_H.csv;
-        #end if
+        cp numbering_raw_H.csv numbering_H.csv 2>/dev/null;
+        cp numbering_raw_KL.csv numbering_KL.csv 2>/dev/null;
         #for $filter in $filters:
             python $__tool_directory__/filter-csv.py 
                 -i 'numbering_${filter.chain}.csv'

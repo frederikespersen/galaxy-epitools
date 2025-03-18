@@ -10,7 +10,10 @@
 
     <command>
         python $__tool_directory__/calc-tap.py
-            --input-pdbs $input_pdbs
+            --input-pdbs 
+                #for $input_pdb in $input_pdbs:
+                    $input_pdb
+                #end for
             --output-tsv $output_tsv
     </command>
 

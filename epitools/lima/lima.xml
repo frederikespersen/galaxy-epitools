@@ -33,7 +33,7 @@
     <inputs>
         <param name="input_fastq" type="data" format="fastq,fastq.gz,fastqsanger" label="Input FASTQ" help="PacBio FASTQ-file to demultiplex."/>
         <conditional name="input_format">
-            <param name="barcode_input_format" type="select" multiple="False" display="radio"c label="Barcodes input format" help="Choose how to specify the barcodes for demultiplexing.">
+            <param name="barcode_input_format" type="select" multiple="False" display="radio" label="Barcodes input format" help="Choose how to specify the barcodes for demultiplexing.">
                 <option value="fasta">As FASTA file</option>
                 <option value="manual">Manually in Galaxy</option>
             </param>
