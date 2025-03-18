@@ -4,7 +4,6 @@
     
     <command><![CDATA[
         paste 
-            -d "$delimiter"
             #for $input in $inputs:
                 $input.file
             #end for
@@ -15,7 +14,6 @@
         <repeat name="inputs"  title="Files to join" min="1">
             <param name="file" type="data" label="Select file to join" help="Select file to join horizontally. It is assumed that all files have an equal number of rows."/>
         </repeat>
-        <param name="delimiter" type="text" value="\t" optional="true" label="Delimiter" help="Specify the delimiter to use when joining files (default is tab)."/>
     </inputs>
     
     <outputs>
