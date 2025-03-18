@@ -48,7 +48,7 @@ def abundance_ngs_dataset(output_tsv: str = None,
     df = df.dropna(subset=cdr_cols)
     
     # Counting reads per hits
-    df = df.value_counts().reset_index().rename({'count': 'Count'}, axis=1)
+    df = df.value_counts().reset_index()
     
     # Determining primary framework (assumed to be library) and removing contaminants
     if decontaminate:
@@ -58,7 +58,7 @@ def abundance_ngs_dataset(output_tsv: str = None,
     
     # Calculating normalized counts
     if normalize:
-        df['Count normalized'] = df['Count'] / normalize
+        df['count_normalized'] = df['count'] / normalize
     
     # Either returning as DataFrame object or saving to file
     if output_tsv is None:
