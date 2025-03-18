@@ -7,8 +7,8 @@
 
     <command><![CDATA[
         mkdir input_pdbs;
-        #for $pdb_dat in $pdb_structures:
-            cp -- $pdb_dat "input_pdbs/\$(basename -- $pdb_dat .dat).pdb";
+        #for $pdb_dat in $input_pdbs:
+            cp -- $pdb_dat "input_pdbs/$pdb_dat.element_identifier";
         #end for
         export USER=epibio;
         $schrodinger_path/run
@@ -22,7 +22,7 @@
     ]]></command>
 
     <inputs>
-        <param argument="--pdb-structures" type="data_collection" format="pdb" label="PDB structures" help="A collection of PDB structures for which to calculate schrodinger protein descriptors."/>
+        <param argument="--input-pdbs" type="data_collection" format="pdb" label="PDB structures" help="A collection of PDB structures for which to calculate schrodinger protein descriptors."/>
         <param argument="--scheme" type="select" multiple="false" optional="true" label="Numbering scheme" help="The antibody numbering scheme to pass to schrodinger">
             <option value="Kabat" selected="true">Kabat</option>
             <option value="IMGT">IMGT</option>
