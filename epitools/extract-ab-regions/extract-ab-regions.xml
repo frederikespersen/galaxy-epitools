@@ -39,7 +39,7 @@
             <option value="wolfguy">Wolfguy</option>
             <option value="aho">AHo</option>
         </param>
-        <repeat name="regions" title="Region">
+        <repeat name="regions" title="Region" min="1">
             <param name="name" type="text" label="Region name" help="The name that will be used for the region."/>
             <param name="chain" type="select" multiple="false" label="Chain" help="Which chain the region is located on.">
                 <option value="KL">Light chain</option>
