@@ -5,6 +5,7 @@
 # Imports
 import argparse
 import itertools
+import os
 import pandas as pd
 import numpy as np
 from Bio import PDB
@@ -413,6 +414,7 @@ def calc_tap(input_pdbs: list[str],
         
     # Combining results from all models
     tap = pd.DataFrame(tap)
+    tap.index = tap.index.map(lambda path: os.path.splitext(os.path.basename(path))[0])
     tap.index.name = 'model'
     
     # Returning or writing results
