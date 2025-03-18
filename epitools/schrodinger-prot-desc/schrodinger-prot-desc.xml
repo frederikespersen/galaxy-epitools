@@ -6,13 +6,19 @@
     </requirements>
 
     <command><![CDATA[
-    $schrodinger_path/run
-        -FROM psp calc_protein_descriptors.py
-            --inputdir $pdb_structures
-            --outputdir protein_desc_output
-            --scheme $scheme
-            --pH $ph
-        -WAIT;
+        mkdir input_pdbs;
+        #for $pdb_dat in $pdb_structures:
+            cp -- $pdb_dat "input_pdbs/\$(basename -- $pdb_dat .dat).pdb";
+        #end for
+        export USER=epibio;
+        $schrodinger_path/run
+            -FROM psp calc_protein_descriptors.py
+                --inputdir input_pdbs
+                --outputdir protein_desc_output
+                --scheme $scheme
+                --pH $ph
+            -WAIT 1>/dev/null;
+        cat JOBNAME.log
     ]]></command>
 
     <inputs>
@@ -25,7 +31,7 @@
             <option value="AHo">Aho</option>
         </param>
         <param argument="--ph" type="float" optional="true" value="7.4" min="0" max="14" label="pH" help="The pH at which to calculate protein descriptors at; Will affect protonation of charged residues."/>
-        <param name="schrodinger_path" type="text" value="/home/epibio/Software/Schrodinger/suites2024-3" optional="true" label="Path to Schrodinger Suite" help="The full path from root to the Schrodinger Suite installation. By default, Schrodinger installs in '/opt/schrodinger/suitesYYYY-V'."/>
+        <param name="schrodinger_path" type="text" value="/home/epibio/Software/Schrodinger/schrodinger2025-1" optional="true" label="Path to Schrodinger Suite" help="The full path from root to the Schrodinger Suite installation. By default, Schrodinger installs in '/opt/schrodinger/suitesYYYY-V'."/>
     </inputs>
 
     <outputs>
