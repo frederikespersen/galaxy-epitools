@@ -8,26 +8,22 @@
     </requirements>
 
     <command><![CDATA[
-    #if $input.multiple:
-        python $__tool_directory__/sequence-liabilities.py multiple
-            --input-fasta $input.input_fasta
+    python $__tool_directory__/sequence-liabilities.py
+        #if $input.multiple:
+            multiple --input-fasta $input.input_fasta
+        #else:
+            single --input-sequence $input.input_sequence
+        #end if
             --liability-patterns 
+                #for $liability in $default_liabilities:
+                    $liability
+                #end for
                 #for $liability in $liabilities:
                     "'$liability.name'=$liability.patterns"
                 #end for
             --format $format
             --output-tsv $output_tsv;
-    #else:
-        python $__tool_directory__/sequence-liabilities.py single
-            --input-sequence $input.input_sequence
-            --liability-patterns 
-                #for $liability in $liabilities:
-                    "'$liability.name'=$liability.patterns"
-                #end for
-            --format $format
-            --output-tsv $output_tsv;
-    #end if
-    ]]>]</command>
+    ]]></command>
 
     <inputs>
         <conditional name="input">
@@ -39,11 +35,23 @@
                 <param argument="--input-sequence" type="text" label="Input Sequence" help="Amino acid sequence to find sequence liabilities in."/>
             </when>
         </conditional>
+        <param name="default_liabilities" type="select" multiple="true" label="Default liabilities" help="Select any common liabilities to search for">
+            <option value="'Cysteine'=C">Cysteine; C</option>
+            <option value="'Oxidation'=M,W">Oxidation; M, W</option>
+            <option value="'Glycosylation'=N[^P][ST]">Glycosylation; N[^P][ST]</option>
+            <option value="'Asn Deamidation'=N[GNST],GN[FGTY]">Asn Deamidation; N[GNST], GN[FGTY]</option>
+            <option value="'Asp Isomerization'=D[DGST]">Asp Isomerization; D[DGST]</option>
+            <option value="'Hydrolysis'=DP">Hydrolysis; DP</option>
+            <option value="'Polyreactivity'=GGG,RR,V[VG],YY,W[A-Z]?W,VVV">Polyreactivity; GGG, RR, V[VG], YY, W[A-Z]?W, VVV</option>
+            <option value="'Aromatic Trimer'=[FWY]{3}">Aromatic Trimer; [FWY]{3}</option>
+            <option value="'Viscosity'=HYF,WH">Viscosity; HYF, WH</option>
+        </param>
         <param argument="--format" type="select" multiple="false" label="Format" help="What format to return results in">
             <option value="records" selected="true">Each liability as a single row</option>
             <option value="condensed" selected="true">Each sequence as a single row</option>
             <option value="pretty" selected="true">An alignment of each sequence and its liabilities</option>
         </param>
+        
         <repeat name="liabilities" title="Liabilities">
             <param name="name" type="text" label="Name" help="Name of liability type, i.e. 'Glycosylation'."/>
             <param name="patterns" type="text" label="Pattenrs" help="A comma-separated list of regular expressions to search for liabilities with, i.e. 'N[^P]S,N[^P]T'."/>
