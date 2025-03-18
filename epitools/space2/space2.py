@@ -6,6 +6,7 @@
 import argparse
 import os
 import glob
+import numpy as np
 import SPACE2
 
 
@@ -16,6 +17,9 @@ def space2_binning(input_pdbs: list[str],
     
     # Running SPACE2
     clustered_dataframe = SPACE2.agglomerative_clustering(input_pdbs, cutoff=1.25, n_jobs=-1)
+    
+    # Assigning clusters arbitrary IDs
+    clustered_dataframe['cluster_by_rmsd'] = np.unique(clustered_dataframe['cluster_by_rmsd'], return_inverse=True)[1]
 
     # Saving results
     clustered_dataframe.to_csv(output_tsv, sep='\t')
