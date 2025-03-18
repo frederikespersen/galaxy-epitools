@@ -130,7 +130,7 @@ def anchor(model: PDB.Model.Model) -> set[PDB.Residue.Residue]:
     return anchor_residues
 
 
-def surface_exposed(model: PDB.Model.Model | PDB.Chain.Chain) -> set[PDB.Residue.Residue]:
+def surface_exposed(model) -> set[PDB.Residue.Residue]:
     """
     Takes a PDB model or chain, returns a set of residues that have a sidechain relative surface exposure of at least 7.5%
     (relative to Ala-Arg-Ala).
@@ -381,7 +381,7 @@ def sfvcsp(model: PDB.Model.Model) -> float:
 # ················································································· #
 
 def calc_tap(input_pdbs: list[str],
-             output_tsv: str=None) -> pd.DataFrame | None:
+             output_tsv: str=None):
     """
     Takes one or more paths to ABodyBuilder2-predicted antibody structures as PDB files,
     returns a table of [Therapeutic Antibody Profiler (TAP)](https://doi.org/10.1073/pnas.1810576116) measures from the Charlotte Dean lab.
