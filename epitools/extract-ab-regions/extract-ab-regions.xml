@@ -10,23 +10,39 @@
 
     <command><![CDATA[
         ANARCI --sequence '$input_fasta' --scheme '$anarci_scheme' --csv --outfile 'numbering_raw';
-        cp numbering_raw_H.csv numbering_H.csv 2>/dev/null;
-        cp numbering_raw_KL.csv numbering_KL.csv 2>/dev/null;
-        #for $filter in $filters:
-            python $__tool_directory__/filter-csv.py 
-                -i 'numbering_${filter.chain}.csv'
-                '${filter.position}=${filter.value}';
-        #end for
-        mkdir -p regions;
-        #for $region in $regions:
-            python $__tool_directory__/extract-ab-region.py
-                --numbering-file 'numbering_${region.chain}.csv'
-                --name '${region.name}'
-                --start '${region.start}'
-                --end '${region.end}'
-                --output-file 'regions/${region.__index__}_${region.name}.tsv';
-        #end for
-        csvjoin -t -c 1 regions/*.tsv | csvformat -T  > '$output_file'
+        #try:
+            cp numbering_raw_H.csv numbering_H.csv 2>/dev/null;
+        #except:
+            echo "ANARCI found no heavy chains"
+        #end try
+        #try:
+            cp numbering_raw_KL.csv numbering_KL.csv 2>/dev/null;
+        #except:
+            echo "ANARCI found no light chains"
+        #end try
+        #try:
+            #for $filter in $filters:
+                python $__tool_directory__/filter-csv.py 
+                    -i 'numbering_${filter.chain}.csv'
+                    '${filter.position}=${filter.value}';
+            #end for
+            mkdir -p regions;
+            #for $region in $regions:
+                python $__tool_directory__/extract-ab-region.py
+                    --numbering-file 'numbering_${region.chain}.csv'
+                    --name '${region.name}'
+                    --start '${region.start}'
+                    --end '${region.end}'
+                    --output-file 'regions/${region.__index__}_${region.name}.tsv';
+            #end for
+            csvjoin -t -c 1 regions/*.tsv | csvformat -T  > '$output_file'
+        #except:
+            echo -n "id" > '$output_file'
+            #for $region in $regions:
+                echo -n ",${region.name}" >> '$output_file'
+            #end for
+            csvformat '$output_file' -T > '$output_file'
+        #end try
     ]]></command>
 
     <inputs>
