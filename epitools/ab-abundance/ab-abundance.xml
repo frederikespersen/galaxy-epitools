@@ -1,4 +1,4 @@
-<tool id='ab-ngs-abundance' name="Calculate Ab abundance in NGS dataset" version="1.0">
+<tool id='ab-abundance' name="Calculate Ab abundance" version="1.0">
 
     <description> grouped on framework and variable regions</description>
 
@@ -7,40 +7,32 @@
     </requirements>
 
     <command><![CDATA[
-        #if $umi_correction.enable:
-            python $__tool_directory__/ab-ngs-abundance.py
-                --input-tsv $input_tsv
-                --framework-col $framework_col
-                --cdr-cols
-                    #for $cdr_col in $cdr_cols
-                        $cdr_col.name
-                    #end for
-                --umi-cols 
+        python $__tool_directory__/ab-ngs-abundance.py
+            --input-tsv $input_tsv
+            --framework-col $framework_col
+            --cdr-cols
+                #for $cdr_col in $cdr_cols
+                    $cdr_col.name
+                #end for
+            #if $umi_correction.enable:
+                    --umi-cols 
                     #for $umi_col in $umi_correction.umi_cols
                         $umi_col.name
-                    #end for
-                #if $decontaminate:
-                    --decontaminate
-                #end if
-                --output-tsv $output_abundance;
-        #else:
-            python $__tool_directory__/ab-ngs-abundance.py
-                --input-tsv $input_tsv
-                --framework-col $framework_col
-                --cdr-cols
-                    #for $cdr_col in $cdr_cols
-                        $cdr_col.name
-                    #end for
-                #if $decontaminate:
-                    --decontaminate
-                #end if
-                --output-tsv $output_abundance;
-        #end if
+                    #end for    
+            #end if
+            #if $decontaminate:
+                --decontaminate
+            #end if
+            #if $return_ids:
+                --return-ids
+            #end if
+            --output-tsv $output_abundance;
     ]]></command>
 
     <inputs>
         <param argument="--input-tsv" type="data" format="tabular,tsv" label="Input TSV" help="TSV file with preprocessed NGS reads"/>
         <param argument="--decontaminate" type="boolean" selected="true" optional="true" label="Remove contaminants" help="If this is selected, all entries that do not have the most abundant framework are treated as contaminants and are filtered away."/>
+        <param argument="--return-ids" type="boolean" selected="false" optional="true" label="Remove IDs" help="If this is selected, a column will be added where the IDs of the entries that contributed to the counts are listed."/>
         <param argument="--framework-col" type="text" value="mapped_to" label="Name of 'Framework' column" help="The name of the framework column in the input datasets (case-sensitive)"/>
         <repeat name="cdr_cols" title="CDR Columns" min="1">
             <param name="name" type="text" label="CDR Column name" help="Name of column containing variable region sequences."/>
@@ -131,6 +123,10 @@ This tool takes a TSV file of Ab sequences, groups the data by variable regions 
 It outputs a tabular file of grouped CDRs and counts.
 
 It has the option to correct for PCR amplification bias by filtering for unique UMI barcodes.
+
+It has the option to remove contaminants from other than the primary framework.
+
+It has the option to return the IDs of the entries that contributed to the count.
 
 Note that header names are case-sensitive.
 
