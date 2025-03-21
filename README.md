@@ -4,7 +4,7 @@ This repository contains a set of custom tools for Galaxy Server. These tools ar
 
 ## Contents
 The following tools, including both the Galaxy tool XML and function python scripts, are found in ``galaxy-epitools/``:
-* ``ab-ngs-abundance``: A tool for counting distinct Ab sequences by their framework and CDRs, correcting for bias via metadata.
+* ``ab-abundance``: A tool for counting distinct Ab sequences by their framework and CDRs, correcting for bias via metadata.
 * ``calc-tada``: A tool for calculating [TA-DA Ab developability scores](https://www.tandfonline.com/doi/full/10.1080/19420862.2022.2080628#d1e434) from Schrodinger protein descriptors (See ``schrodinger-prot-desc``).
 * ``calc-tap``: A tool for calculating [TAP Ab developability scores](https://doi.org/10.1073/pnas.1810576116) from ABodyBuilder2 models (See ``immunebuilder``).
 * ``demultiplex-dorado``: A tool for demultiplexing Oxford Nanopore reads by the barcodes called by Dorado during basecalling.
@@ -27,7 +27,7 @@ and add the following section to your ``galaxy/config/tools_conf.xml``:
 <toolbox monitor="true">
   <!-- [... other tools ...] -->
   <section id="epitools" name="EpiTools">
-    <tool file="epitools/ab-ngs-abundance/ab-ngs-abundance.xml"/>
+    <tool file="epitools/ab-abundance/ab-abundance.xml"/>
     <tool file="epitools/calc-tada/calc-tada.xml"/>
     <tool file="epitools/calc-tap/calc-tap.xml"/>
     <tool file="epitools/demultiplex-dorado/demultiplex-dorado.xml"/>
