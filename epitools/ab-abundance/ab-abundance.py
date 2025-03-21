@@ -54,7 +54,7 @@ def abundance_ngs_dataset(output_tsv: str = None,
     # Optionally appending IDs
     if return_ids:
         df.index.rename('id', inplace=True)
-        df_ids = df.reset_index().groupby([*df.columns])['id'].apply(list).rename('ids')
+        df_ids = df.reset_index().groupby([*df.columns])['id'].apply(list).rename('entries')
         df = pd.merge(df_counts, df_ids, left_index=True, right_index=True).reset_index()
     else: 
         df = df_counts.reset_index()
