@@ -14,6 +14,7 @@ The following tools, including both the Galaxy tool XML and function python scri
 * ``lima``: A small implementation of PacBio's [Lima](https://lima.how) for demultiplexing reads. This tool is developed with a very custom set of settings and is not intended for general use.
 * ``paste``: An implementation of the basic shell command ``paste``.
 * ``schrodinger-prot-desc``: A tool for calculating Ab protein descriptors with [Schrodinger](https://support.schrodinger.com/s/article/827119).
+* ``sequence-distance``: A tool for determining a sequence distance matrix between two sets of sequences.
 * ``sequence-liabilities``: A tool for finding sequence liabilities with regular expressions.
 * ``space2``: A tool for epitope clustering antibodies by their structure with [SPACE2](https://github.com/oxpig/SPACE2).
 * ``translate-sam``: A tool for translating reads mapped to a reference template, in the reading frame of the template.
@@ -37,6 +38,7 @@ and add the following section to your ``galaxy/config/tools_conf.xml``:
     <tool file="epitools/lima/lima.xml"/>
     <tool file="epitools/paste/paste.xml"/>
     <tool file="epitools/schrodinger-prot-desc/schrodinger-prot-desc.xml"/>
+    <tool file="epitools/sequence-distance/sequence-distance.xml"/>
     <tool file="epitools/sequence-liabilities/sequence-liabilities.xml"/>
     <tool file="epitools/space2/space2.xml"/>
     <tool file="epitools/translate-sam/translate-sam.xml"/>

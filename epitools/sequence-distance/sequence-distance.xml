@@ -1,0 +1,70 @@
+<tool id="sequence-distance" name="Calculate Sequence Distance" version="1.0">
+
+    <description> between two sets of sequences</description>
+
+    <requirements>
+        <requirement type="package" version="2.2.3">pandas</requirement>
+        <requirement type="package" version="0.27.1">Levenshtein</requirement>
+        <requirement type="package" version="1.26.4">numpy</requirement>
+    </requirements>
+
+    <command><![CDATA[
+        python $__tool_directory__/sequence-distance.py
+                --input-set1-tsv $input_set1_tsv
+                #if $input_set1_tsv_idcol:
+                    --input-set1-tsv-idcol
+                #end if
+                --input-set2-tsv $input_set2_tsv
+                #if $input_set2_tsv_idcol:
+                    --input-set2-tsv-idcol
+                #end if
+                --measure $measure
+                --representation $representation
+                #if not $return_list:
+                    --sum-subsets
+                #end if
+                --output-tsv $output_tsv
+    ]]></command>
+
+    <inputs>
+        <param argument="--input-set1-tsv" type="data" format="tabular,tsv" label="First sequence set (Columns)" help="A TSV containing an ID column followed by column(s) of sequences to compare against the other sequence set. This set will be propagated across columns in the output sequence distance matrix."/>
+        <param argument="--input-set1-tsv-idcol" type="boolean" checked="false" optional="true" label="First column is ID" help="Whether the first column of the first input file contains IDs for row entries. If not, arbitrary IDs will be assigned."/>
+        <param argument="--input-set2-tsv" type="data" format="tabular,tsv" label="Second sequence set (Rows)" help="A TSV containing an ID column followed by column(s) of sequences to compare against the other sequence set. This set will be propagated across rows in the output sequence distance matrix."/>    </inputs>
+        <param argument="--input-set2-tsv-idcol" type="boolean" checked="false" optional="true" label="First column is ID" help="Whether the first column of the second input file contains IDs for row entries. If not, arbitrary IDs will be assigned."/>
+        <param argument="--measure" type="select" multiple="false" optional="true" label="Distance measure" help="Which measure to calculate sequence distance with.">
+            <option value="levenshtein" selected="true">Levenshtein (Conventional edit distance)</option>
+        </param>
+        <param argument="--representation" type="select" multiple="false" optional="true" label="Amino acid representation" help="How to represent amino acids before calculating edit distance. For instance, amino acids of the same type (D, E) can be represented as the same pseudo residue (Acidic) such that they don't contribute to the edit distance.">
+            <option value="standard" selected="true">Amino acids as-is</option>
+            <option value="specifica">Specifica pseudo residues by amino acid type</option>
+        </param>
+        <param argument="--return-list" type="boolean" checked="false" optional="true" label="Return list of distances" help="Whether to return a list of sequence distances, with one entry for every pair of columns. Otherwise, a single total sequence distance sum is returned"/>
+    </inputs>
+
+    <outputs>
+        <data name="output_tsv" format="tabular" label="${tool.name}: Sequence distance matrix"/>
+    </outputs>
+
+    <help><![CDATA[
+    
+    .. class:: infomark.
+
+    **What it does**
+
+    This tool calculates the pairwise sequence distance between two sets of sequences. 
+    The tool supports different distance measures and amino acid representations to facilitate various types of sequence comparisons.
+    
+    ]]></help>
+    
+    <citations>
+        <citation type="bibtex">
+            @software{python-levenshtein,
+                author = {Max Bachmann and contributors},
+                title = {Python-Levenshtein},
+                year = {2025},
+                url = {https://github.com/rapidfuzz/Levenshtein},
+                note = {Version 0.26.0, accessed March 21, 2025}}
+        </citation>
+    </citations>
+
+</tool>
