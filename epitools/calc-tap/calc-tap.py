@@ -5,6 +5,7 @@
 # Imports
 import argparse
 import itertools
+import os
 import pandas as pd
 import numpy as np
 from Bio import PDB
@@ -55,9 +56,9 @@ CHARGE = {'ASP': -1, 'GLU': -1, 'LYS': 1, 'ARG': 1, 'HIS': 0.1}
 IMGT_LC_CDRS = [*range(27, 38+1), *range(56, 65+1), *range(105, 117+1)]
 IMGT_HC_CDRS = [*range(27, 38+1), *range(56, 65+1), *range(105, 117+1)]
 
-# Defining IMGT anchor residue positions as residues immediately neighbouring IMGT defined CDR positions
-IMGT_LC_ANCHORS = (set(pos + 1 for pos in IMGT_LC_CDRS) | set(pos - 1 for pos in IMGT_LC_CDRS)) - set(IMGT_LC_CDRS)
-IMGT_HC_ANCHORS = (set(pos + 1 for pos in IMGT_HC_CDRS) | set(pos - 1 for pos in IMGT_HC_CDRS)) - set(IMGT_HC_CDRS)
+# Defining IMGT anchor residue positions as residues ±2 positions neighbouring IMGT defined CDR positions
+IMGT_LC_ANCHORS = (set(pos + 1 for pos in IMGT_LC_CDRS) | set(pos - 1 for pos in IMGT_LC_CDRS) | set(pos + 2 for pos in IMGT_LC_CDRS) | set(pos - 2 for pos in IMGT_LC_CDRS)) - set(IMGT_LC_CDRS)
+IMGT_HC_ANCHORS = (set(pos + 1 for pos in IMGT_HC_CDRS) | set(pos - 1 for pos in IMGT_HC_CDRS) | set(pos + 2 for pos in IMGT_HC_CDRS) | set(pos - 2 for pos in IMGT_HC_CDRS)) - set(IMGT_HC_CDRS)
 
 # SASA of Ala-Arg-Ala tripeptide with the Shrake and Rupley algorithm
 ARA_SASA = 241 #TODO: Verify
@@ -167,19 +168,20 @@ def cdr_vicinity(model: PDB.Model.Model) -> set[PDB.Residue.Residue]:
     Takes a PDB model or chain, returns a set of surface-exposed residues that are
         1) CDRs,
         2) anchor residues, or
-        3) in the vicinity of CDRs by a minimum distance of 4 Å between the closest heavy atoms.
+        3) in the vicinity of CDRs by a minimum distance of 4.5 Å between the closest heavy atoms.
     
     :param model: A PDB model.
     :return cdr_vicinity_residues: A set of surface exposed residues in, immediately flanking, or in the vicinity of CDRs.
     """
     # Initializing set with CDR and anchor residues
-    cdr_vicinity_residues = cdr(model) | anchor(model)
+    cdr_anchor_residues = cdr(model) | anchor(model)
+    cdr_vicinity_residues = cdr_anchor_residues.copy()
     
     # Looping over surface exposed residues
     for res in surface_exposed(model):
         
         # Looping over possible neighbouring CDR residues
-        for cdr_res in cdr(model):
+        for cdr_res in cdr_anchor_residues:
             
             # Skipping to next surface-exposed residue if it is already assigned as in-vicinity
             if res in cdr_vicinity_residues:
@@ -196,7 +198,7 @@ def cdr_vicinity(model: PDB.Model.Model) -> set[PDB.Residue.Residue]:
                 for cdr_atom in [atom for atom in cdr_res if atom.element != 'H']:
                     
                     # Adding surface-exposed residue to set if in vicinity of a CDR residue
-                    if atom - cdr_atom < 4.0:
+                    if atom - cdr_atom < 4.5:
                         cdr_vicinity_residues.add(res)
                         break
                     
@@ -413,6 +415,7 @@ def calc_tap(input_pdbs: list[str],
         
     # Combining results from all models
     tap = pd.DataFrame(tap)
+    tap.index = tap.index.map(lambda path: os.path.splitext(os.path.basename(path))[0])
     tap.index.name = 'model'
     
     # Returning or writing results

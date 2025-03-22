@@ -21,8 +21,11 @@ def space2_binning(input_pdbs: list[str],
     # Assigning clusters arbitrary IDs
     clustered_dataframe['cluster_by_rmsd'] = np.unique(clustered_dataframe['cluster_by_rmsd'], return_inverse=True)[1]
 
+    # Setting basename as IDs
+    clustered_dataframe['ID'] = clustered_dataframe['ID'].map(lambda path: os.path.splitext(os.path.basename(path))[0])
+
     # Saving results
-    clustered_dataframe.to_csv(output_tsv, sep='\t')
+    clustered_dataframe.to_csv(output_tsv, sep='\t', index=False)
     
 # ················································································· #
 

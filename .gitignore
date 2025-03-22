@@ -14,3 +14,6 @@ logs/
 # Local junk
 __pycache__/
 .DS_Store
+
+# Local backups
+*backup/

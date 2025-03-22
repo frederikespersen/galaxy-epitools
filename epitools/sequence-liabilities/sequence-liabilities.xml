@@ -54,7 +54,7 @@
         
         <repeat name="liabilities" title="Liabilities">
             <param name="name" type="text" label="Name" help="Name of liability type, i.e. 'Glycosylation'."/>
-            <param name="patterns" type="text" label="Pattenrs" help="A comma-separated list of regular expressions to search for liabilities with, i.e. 'N[^P]S,N[^P]T'."/>
+            <param name="patterns" type="text" label="Patterns" help="A comma-separated list of regular expressions to search for liabilities with, i.e. 'N[^P]S,N[^P]T'."/>
         </repeat>
     </inputs>
 
