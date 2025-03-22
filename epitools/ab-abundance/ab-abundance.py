@@ -12,10 +12,13 @@ import pandas as pd
 def load_ngs_dataset(input_tsv: str,
                      framework_col: str,
                      cdr_cols: list[str],
-                     umi_cols: list[str] = []) -> pd.DataFrame:
+                     umi_cols: list[str] = [],
+                     id_col: str = None) -> pd.DataFrame:
     
     # Loading data
-    data = pd.read_csv(input_tsv, delimiter='\t', index_col=0)
+    data = pd.read_csv(input_tsv, delimiter='\t')
+    if id_col is not None:
+        data.set_index(id_col, inplace=True)
     
     # Assembling data
     df = pd.concat([
@@ -31,7 +34,6 @@ def load_ngs_dataset(input_tsv: str,
 def abundance_ngs_dataset(output_tsv: str = None,
                           normalize: int = False,
                           decontaminate: bool = False,
-                          return_ids: bool=False,
                           **load_ngs_dataset_kwargs) -> pd.DataFrame:
     
     # Loading data
@@ -52,7 +54,7 @@ def abundance_ngs_dataset(output_tsv: str = None,
     df_counts = df.value_counts()
 
     # Optionally appending IDs
-    if return_ids:
+    if load_ngs_dataset_kwargs.get('id_col', False):
         df.index.rename('id', inplace=True)
         df_ids = df.reset_index().groupby([*df.columns])['id'].apply(list).rename('entries')
         df = pd.merge(df_counts, df_ids, left_index=True, right_index=True).reset_index()
@@ -86,7 +88,7 @@ if __name__ == "__main__":
     parser.add_argument("--cdr-cols", type=str, nargs='+', required=False, default=['cdrl1','cdrl2','cdrl3','cdrh1','cdrh2','cdrh3'], help="Names of CDR columns [Default ['cdrl1','cdrl2','cdrl3','cdrh1','cdrh2','cdrh3']]")
     parser.add_argument("--umi-cols", type=str, nargs='+', required=False, default=[], help="Names of UMI columns [If not provided, no UMI-bias correction is performed]")
     parser.add_argument("--decontaminate", action='store_true', required=False, help="Whether to remove entires of all but the highest abundance framework, assuming they are contaminants.")
-    parser.add_argument("--return-ids", action='store_true', required=False, help="Whether to return a column of lists of IDs of the entries that contributed to the count (For backtracking to wells).")
+    parser.add_argument("--id-col", type=str, required=False, default=False, help="Which column contains entry IDs. Will return a column of lists of IDs of the entries that contributed to the count (For backtracking to wells).")
     parser.add_argument("--output-tsv", default='ab-abundance.tsv', help="Path to save the processed dataset to as TSV")
     
     # ············································································· #
