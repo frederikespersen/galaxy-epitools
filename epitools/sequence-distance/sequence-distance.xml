@@ -29,7 +29,7 @@
     <inputs>
         <param argument="--input-set1-tsv" type="data" format="tabular,tsv" label="First sequence set (Columns)" help="A TSV containing an ID column followed by column(s) of sequences to compare against the other sequence set. This set will be propagated across columns in the output sequence distance matrix."/>
         <param argument="--input-set1-tsv-idcol" type="boolean" checked="false" optional="true" label="First column is ID" help="Whether the first column of the first input file contains IDs for row entries. If not, arbitrary IDs will be assigned."/>
-        <param argument="--input-set2-tsv" type="data" format="tabular,tsv" label="Second sequence set (Rows)" help="A TSV containing an ID column followed by column(s) of sequences to compare against the other sequence set. This set will be propagated across rows in the output sequence distance matrix."/>    </inputs>
+        <param argument="--input-set2-tsv" type="data" format="tabular,tsv" label="Second sequence set (Rows)" help="A TSV containing an ID column followed by column(s) of sequences to compare against the other sequence set. This set will be propagated across rows in the output sequence distance matrix."/>
         <param argument="--input-set2-tsv-idcol" type="boolean" checked="false" optional="true" label="First column is ID" help="Whether the first column of the second input file contains IDs for row entries. If not, arbitrary IDs will be assigned."/>
         <param argument="--measure" type="select" multiple="false" optional="true" label="Distance measure" help="Which measure to calculate sequence distance with.">
             <option value="levenshtein" selected="true">Levenshtein (Conventional edit distance)</option>
