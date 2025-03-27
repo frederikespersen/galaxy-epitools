@@ -1,0 +1,67 @@
+<tool id="translate-orfs" name="Translate all ORFs" version="1.0.0">
+
+    <description> and select best match to templates</description>
+
+    <requirements>
+        <requirement type="package" version="0.22.1">pysam</requirement>
+        <requirement type="package" version="2.2.3">pandas</requirement>
+        <requirement type="package" version="0.27.1">Levenshtein</requirement>
+        <requirement type="package" version="1.26.4">numpy</requirement>
+    </requirements>
+
+    <command><![CDATA[
+    #if $match.enable:
+        #if $match.template.multiple:
+            cat $template.template.fasta > templates.fasta;
+        #else:
+            cat ">Template" > templates.fasta;
+            cat $template.template.sequence >> templates.fasta;
+        #end if
+    python $__tool_directory__/translate-orfs.py 
+        --input-fa $input_fa
+        #if $match.enable:
+            --template-fasta templates.fasta
+        #end if
+        --output-tsv $output_tsv;
+    ]]></command>
+
+    <inputs>
+        <param argument="--input-fa" type="data" format="fastq,fastqsanger,fasta" label="Input FASTA/FASTQ" help="FASTA or FASTQ file of DNA sequences to translate."/>
+        <conditional name="match">
+            <param name="enable" type="boolean" optional="true" selected="false" label="Choose ORF by match to template" help="Whether to return the ORF that best matches a template sequence / one of a set of template sequences."/>
+            <when value="true">
+                <conditional name="template">
+                    <param name="multiple" type="boolean" optional="true" selected="false" label="Use multiple templates" help="Whether to paste in a single template sequence or provide a FASTA of multiple possible template sequences to match. If multiple are provided, the best ORF-Template pair will be used."/>
+                    <when value="true">
+                        <param name="fasta" type="data" format="fasta" label="Templates FASTA" help="FASTA file of template sequences to match ORFs to."/>
+                    </when>
+                    <when value="false">
+                        <param name="sequence" type="text" label="Template sequence" help="Template sequence to match ORFs to."/>
+                    </when>
+                </conditional>
+            </when>
+        </conditional>
+    </inputs>
+
+    <outputs>
+        <data name="output_tsv" format="tabular" label="${tool.name}: Open Reading Frame Translations"/>
+    </outputs>
+
+    <help><![CDATA[
+    
+.. class:: infomark.
+
+**What it does**
+
+This tool takes a set of DNA sequences and translates them in every open reading frame (ORF).
+
+It has the option to pick the 'best' translation by choosing the ORF that has the shortest edit distance to one or more template sequences.
+
+    ]]></help>
+
+    <citations>
+        <citation type="doi">https://doi.org/10.5281/zenodo.3509134</citation>
+        <citation type="doi">https://doi.org/10.1093/bioinformatics/btp163</citation>
+    </citations>
+
+</tool>
