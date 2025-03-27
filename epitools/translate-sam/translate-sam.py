@@ -34,7 +34,7 @@ def translate_aligned_read(read: AlignedSegment,
     :return: A translation of the read in the alignment reading frame.
     """
     # Retrieving sequence
-    read_sequence = read.query_sequence
+    read_sequence = read.query_sequence # If the read mapped to the reverse template, query_sequence is already reverse-complemented (Line 1949 in pysam/libcalignedsegment.pyx)
     
     # Determining open reading frame
     orf_start = read.query_alignment_start
@@ -47,7 +47,6 @@ def translate_aligned_read(read: AlignedSegment,
         orf_sequence = read_sequence[orf_start:] if codon_trim == 0 else read_sequence[orf_start:-codon_trim]
 
     # Translating
-    orf_sequence = orf_sequence if not read.is_reverse else str(Seq(orf_sequence).reverse_complement())
     read_translation = str(Seq(orf_sequence).translate())
     
     # Optional truncation
@@ -90,7 +89,7 @@ def translate_sam(input_sam: str,
         for read in sam:
 
             # Skipping badly mapped reads
-            if not read.is_mapped or read.mapq < val_min_mapq:
+            if not read.is_mapped or read.mapping_quality < val_min_mapq:
                 continue
 
             # Skipping reads that do not match template FRW4
