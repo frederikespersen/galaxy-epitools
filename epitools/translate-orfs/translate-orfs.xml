@@ -3,24 +3,25 @@
     <description> and select best match to templates</description>
 
     <requirements>
-        <requirement type="package" version="0.22.1">pysam</requirement>
         <requirement type="package" version="2.2.3">pandas</requirement>
         <requirement type="package" version="0.27.1">Levenshtein</requirement>
         <requirement type="package" version="1.26.4">numpy</requirement>
+        <requirement type="package" version="1.84">biopython</requirement>
     </requirements>
 
     <command><![CDATA[
     #if $match.enable:
         #if $match.template.multiple:
-            cat $template.template.fasta > templates.fasta;
+            cat $match.template.fasta > templates.fasta;
         #else:
             cat ">Template" > templates.fasta;
-            cat $template.template.sequence >> templates.fasta;
+            cat $match.template.sequence >> templates.fasta;
         #end if
+    #end if
     python $__tool_directory__/translate-orfs.py 
         --input-fa $input_fa
         #if $match.enable:
-            --template-fasta templates.fasta
+            --templates-fasta templates.fasta
         #end if
         --output-tsv $output_tsv;
     ]]></command>
@@ -33,10 +34,10 @@
                 <conditional name="template">
                     <param name="multiple" type="boolean" optional="true" selected="false" label="Use multiple templates" help="Whether to paste in a single template sequence or provide a FASTA of multiple possible template sequences to match. If multiple are provided, the best ORF-Template pair will be used."/>
                     <when value="true">
-                        <param name="fasta" type="data" format="fasta" label="Templates FASTA" help="FASTA file of template sequences to match ORFs to."/>
+                        <param name="fasta" type="data" format="fasta" label="Templates FASTA" help="FASTA file of template amino acid sequences to match ORFs to."/>
                     </when>
                     <when value="false">
-                        <param name="sequence" type="text" label="Template sequence" help="Template sequence to match ORFs to."/>
+                        <param name="sequence" type="text" label="Template sequence" help="Template amino acid sequence to match ORFs to."/>
                     </when>
                 </conditional>
             </when>
